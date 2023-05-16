@@ -1,86 +1,57 @@
-import core.Command;
-import core.CommandFork;
-import core.CommandInput;
-import core.Context;
+import CommandCore.*;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    public static void register(String account,String password){
-        System.out.println("Registered Account "+account+" with password "+password);
-    }
+
+    static Command rootCommand=new Command();
     public static void main(String[] args) {
         System.out.println("hello, user");
-
-        Command userCommand=new CommandFork("user")
-                .then(new CommandFork("login")
-                        .then(new CommandInput("account","String")
-                                .then(new CommandInput("password","String")
-                                        .end(context -> {
-                                            register(
-                                                    (String)context.get("account"),
-                                                    (String)context.get("password")
-                                            );
-                                        })
-                                )
-                        )
-                )
-                .then(new CommandFork("register"));
-        Command teacherCommand=new CommandFork("teacher")
-                .then(new CommandFork("login"))
-                .then(new CommandFork("register"));
-
-        Command commandBuild=new Command();
-
-        commandBuild
-            .then(new CommandFork("user")
-                    .then(new CommandFork("login")
-                            .then(new CommandInput("account","String")
-                                    .then(new CommandInput("password","String")
-                                            .end(context -> {
-                                                register(
-                                                        (String)context.get("account"),
-                                                        (String)context.get("password")
-                                                );
-                                            })
-                                    )
-                            )
-                    )
-                    .then(new CommandFork("register"))
-            )
-            .then(new CommandFork("teacher")
-                    .then(new CommandFork("login"))
-                    .then(new CommandFork("register"))
-            );
+        Scanner puller=new Scanner(System.in);
 
 
-        String command=new Scanner(System.in).nextLine();
-        String copy=command;
-        Command commandProcedure=commandBuild;
+
+
+        while(true){
+            String userInput=puller.nextLine();
+            parseCommand(breakDownString(userInput));
+        }
+    }
+    public static void parseCommand(ArrayList<String> params){
+        Command commandProcedure=rootCommand;
         Context parameter=new Context();
-        while( copy.length()>0 ){
-            if(copy.charAt(0)==' '){
-                copy=copy.substring(1);
-                continue;
-            }else{
-                int keyFrame=copy.indexOf(' ')==-1?copy.length():copy.indexOf(' ');
-                String parsed=copy.substring(0,keyFrame);
-                System.out.println("Parsed: "+parsed);
-
-                commandProcedure=commandProcedure.progress(parsed);
-                if(commandProcedure instanceof CommandInput){
-                    parameter.add(((CommandInput) commandProcedure).name,((CommandInput) commandProcedure).type,parsed);
-                }
-                System.out.println("Procedure: "+commandProcedure.name);
-                if(!commandProcedure.hasFork()){
-                    commandProcedure.executable.accept(parameter);
-                }
-
-                copy=copy.substring(keyFrame);
+        for (String param:
+             params) {
+            commandProcedure=commandProcedure.progress(param);
+            if(commandProcedure instanceof CommandInput){
+                parameter.add(commandProcedure.name,((CommandInput) commandProcedure).type,param);
+            }
+//            System.out.println("Procedure: "+commandProcedure.name);
+            if(commandProcedure.isEnd()){
+                commandProcedure.executable.accept(parameter);
             }
         }
-        if(commandProcedure.hasFork()){
+        if(!commandProcedure.isEnd()){
             System.out.println("命令不完整！");
         }
+        //特有的叹号
+    }
+    public static ArrayList<String> breakDownString(String rawString){
+        ArrayList<String>atoms=new ArrayList<>();
+        while( rawString.length()>0 ){
+            if(rawString.charAt(0)==' '){
+                rawString=rawString.substring(1);
+                continue;
+            }else{
+                int keyFrame=rawString.indexOf(' ')==-1?rawString.length():rawString.indexOf(' ');
+                String piece=rawString.substring(0,keyFrame);
+
+                atoms.add(piece);
+
+                rawString=rawString.substring(keyFrame);
+            }
+        }
+        return atoms;
     }
 }

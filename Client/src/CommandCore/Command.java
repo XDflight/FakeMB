@@ -1,9 +1,7 @@
-package core;
+package CommandCore;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 public class Command {
@@ -18,6 +16,9 @@ public class Command {
 
     public boolean hasFork() {
         return hasFork;
+    }
+    public boolean isEnd() {
+        return !hasFork;
     }
 
     public Command then(Command in) {
