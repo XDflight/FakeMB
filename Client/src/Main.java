@@ -12,7 +12,26 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("hello, user");
 
+        Command userCommand=new CommandFork("user")
+                .then(new CommandFork("login")
+                        .then(new CommandInput("account","String")
+                                .then(new CommandInput("password","String")
+                                        .end(context -> {
+                                            register(
+                                                    (String)context.get("account"),
+                                                    (String)context.get("password")
+                                            );
+                                        })
+                                )
+                        )
+                )
+                .then(new CommandFork("register"));
+        Command teacherCommand=new CommandFork("teacher")
+                .then(new CommandFork("login"))
+                .then(new CommandFork("register"));
+
         Command commandBuild=new Command();
+
         commandBuild
             .then(new CommandFork("user")
                     .then(new CommandFork("login")

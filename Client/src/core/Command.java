@@ -14,6 +14,8 @@ public class Command {
     boolean isParameterStarter=false;
     String nextParameter;
 
+
+
     public boolean hasFork() {
         return hasFork;
     }
