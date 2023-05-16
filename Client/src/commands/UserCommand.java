@@ -1,8 +1,8 @@
-package Commands;
+package commands;
 
-import CommandCore.Command;
-import CommandCore.CommandFork;
-import CommandCore.CommandInput;
+import commandCore.Command;
+import commandCore.CommandFork;
+import commandCore.CommandInput;
 
 public class UserCommand {
     static Command userCommand=new CommandFork("user")
@@ -10,7 +10,7 @@ public class UserCommand {
                     .then(new CommandInput("account","String")
                             .then(new CommandInput("password","String")
                                     .end(context -> {
-                                        register(
+                                        registerAccount(
                                                 (String)context.get("account"),
                                                 (String)context.get("password")
                                         );
@@ -20,7 +20,11 @@ public class UserCommand {
             )
             .then(new CommandFork("register"));
 
-    public static void register(String account,String password){
+
+    public static void register(Command root){
+        root.then(userCommand);
+    }
+    public static void registerAccount(String account,String password){
         System.out.println("Registered Account "+account+" with password "+password);
     }
 }

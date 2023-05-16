@@ -1,4 +1,4 @@
-package CommandCore;
+package commandCore;
 
 public class CommandInput extends Command{
 
