@@ -22,11 +22,6 @@ public class HashTool {
         ).toString(16).toUpperCase();
     }
 
-    /*
-     * @private:    getHastInst
-     * @note:       This method can be used to get a hashing-instance from the system JDK.
-     * @retval:     [MessageDigest] A system-provide hashing instance.
-     */
     private static MessageDigest getHashInst() {
         try {
             return MessageDigest.getInstance("MD5");
