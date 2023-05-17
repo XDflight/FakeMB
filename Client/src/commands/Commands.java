@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Commands {
 
     public static Command rootCommand=new Command();
-    public Commands(){
+    static{
         TeacherCommand.register(rootCommand);
         UserCommand.register(rootCommand);
     }
@@ -26,7 +26,7 @@ public class Commands {
             }
 //            System.out.println("Procedure: "+commandProcedure.name);
             if(commandProcedure.isEnd()){
-                commandProcedure.executable.accept(parameter);
+                commandProcedure.run(parameter);
             }
         }
         if(!commandProcedure.isEnd()){
