@@ -6,19 +6,20 @@ import commandCore.CommandInput;
 
 public class UserCommand {
     static Command userCommand=new CommandFork("user")
-            .then(new CommandFork("login")
+            .then(new CommandFork("register")
                     .then(new CommandInput("account","String")
                             .then(new CommandInput("password","String")
                                     .end(context -> {
-                                        registerAccount(
-                                                (String)context.get("account"),
-                                                (String)context.get("password")
-                                        );
-                                    })
+                                            registerAccount(
+                                                    (String)context.get("account"),
+                                                    (String)context.get("password")
+                                            );},
+                                            0
+                                    )
                             )
                     )
             )
-            .then(new CommandFork("register"));
+            .then(new CommandFork("login"));
 
 
     public static void register(Command root){

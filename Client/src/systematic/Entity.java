@@ -6,7 +6,7 @@ public abstract class Entity {
 
     //An approach of indirect deleting
 
-    //To make a entity as removed (Student, Teacher, etc..)
+    //To mark a entity as removed (Student, Teacher, etc..)
     public void remove() {
         isRemoved = true;
     }
