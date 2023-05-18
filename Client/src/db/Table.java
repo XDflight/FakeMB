@@ -76,7 +76,7 @@ public class Table {
         table.setValue(0, "name", "Ridge");
         table.setValue(0, "score", 0);
         table.setValue(1, "name", "James");
-        table.setValue(1, "score", 100);
+        table.setValue(1, "score", -1);
         System.out.println(table.serialize(0));
     }
 }
