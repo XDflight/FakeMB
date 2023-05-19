@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Logger {
-    public static void log2file(String message) {
+    private static void log2file(String message) {
         PrintWriter out = null;
         SimpleDateFormat dateFormat=new SimpleDateFormat("YYYY-MM-dd");
         try {
@@ -19,7 +19,7 @@ public class Logger {
         out.write(message+"\n");
         out.close();
     }
-    public void message(String in){
+    private void message(String in){
         System.out.println(in);
         log2file(in);
     }

@@ -43,6 +43,7 @@ public class Table {
         if (!fields.containsKey(fieldName))
             return false;
         rows.get(rowIndex).put(fieldName, value);
+
         return true;
     }
 
@@ -77,6 +78,8 @@ public class Table {
         table.setValue(0, "score", 0);
         table.setValue(1, "name", "James");
         table.setValue(1, "score", -1);
+
+
         System.out.println(table.serialize(0));
     }
 }
