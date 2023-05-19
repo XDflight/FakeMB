@@ -73,7 +73,7 @@ public class Table {
     /*
      * @public:     addRow
      * @note:       Add a new row to the table.
-     * @param:      [(Pair<String,Object>[]) initializers] The initializers.
+     * @param:      [(Pair<String,Object>[]) initializers] The initializers. Can be null.
      * @retval:     [Table] "this" is returned.
      */
     public Table addRow(Pair<String, Object>[] initializers) {
@@ -84,7 +84,7 @@ public class Table {
      * @public:     addRow
      * @note:       Add a new row to the table at a specific position.
      * @param:      [(int) rowIndex] The position where the row will be added.
-     * @param:      [(Pair<String,Object>[]) initializers] The initializers.
+     * @param:      [(Pair<String,Object>[]) initializers] The initializers. Can be null.
      * @retval:     [Table] "this" is returned.
      */
     public Table addRow(int rowIndex, Pair<String, Object>[] initializers) {
