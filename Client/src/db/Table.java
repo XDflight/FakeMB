@@ -1,5 +1,8 @@
 package db;
 
+import javafx.util.Pair;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,9 +54,11 @@ public class Table {
      * @public:     removeField
      * @note:       Remove a field(column) from the table.
      * @param:      [(String) fieldName] The field name.
+     * @retval:     [Table] "this" is returned.
      */
-    public void removeField(String fieldName) {
+    public Table removeField(String fieldName) {
         fields.remove(fieldName);
+        return this;
     }
 
     /*
@@ -68,39 +73,42 @@ public class Table {
     /*
      * @public:     addRow
      * @note:       Add a new row to the table.
+     * @param:      [(Pair<String,Object>[]) initializers] The initializers.
+     * @retval:     [Table] "this" is returned.
      */
-    public void addRow() {
-        rows.add(new HashMap<String, Object>());
+    public Table addRow(Pair<String, Object>[] initializers) {
+        return addRow(getRowNum(), initializers);
     }
 
     /*
      * @public:     addRow
      * @note:       Add a new row to the table at a specific position.
      * @param:      [(int) rowIndex] The position where the row will be added.
-     * @retval:     [boolean] True if the operation is successful.
+     * @param:      [(Pair<String,Object>[]) initializers] The initializers.
+     * @retval:     [Table] "this" is returned.
      */
-    public boolean addRow(int rowIndex) {
-        try {
-            rows.add(rowIndex, new HashMap<String, Object>());
-            return true;
-        } catch (IndexOutOfBoundsException e) {
-            return false;
+    public Table addRow(int rowIndex, Pair<String, Object>[] initializers) {
+        Map<String, Object> row = new HashMap<String, Object>();
+        if (initializers != null) {
+            for (Pair<String, Object> initializer : initializers) {
+                if (!fields.containsKey(initializer.getKey()))
+                    continue;
+                row.put(initializer.getKey(), initializer.getValue());
+            }
         }
+        rows.add(rowIndex, row);
+        return this;
     }
 
     /*
      * @public:     removeRow
      * @note:       Remove a row from the table.
      * @param:      [(int) rowIndex] The position where the row will be removed.
-     * @retval:     [boolean] True if the operation is successful.
+     * @retval:     [Table] "this" is returned.
      */
-    public boolean removeRow(int rowIndex) {
-        try {
-            rows.remove(rowIndex);
-            return true;
-        } catch (IndexOutOfBoundsException e) {
-            return false;
-        }
+    public Table removeRow(int rowIndex) {
+        rows.remove(rowIndex);
+        return this;
     }
 
     /*
@@ -109,15 +117,15 @@ public class Table {
      * @param:      [(int) rowIndex] The row ID.
      * @param:      [(String) fieldName] The field name.
      * @param:      [(Object) value] The value.
-     * @retval:     [boolean] True if the operation is successful.
+     * @retval:     [Table] "this" is returned.
      */
-    public boolean setValue(int rowIndex, String fieldName, Object value) {
+    public Table setValue(int rowIndex, String fieldName, Object value) {
         if (rowIndex < 0 || rowIndex >= rows.size())
-            return false;
+            return this;
         if (!fields.containsKey(fieldName))
-            return false;
+            return this;
         rows.get(rowIndex).put(fieldName, value);
-        return true;
+        return this;
     }
 
     /*
@@ -171,8 +179,9 @@ public class Table {
      * @param:      [(int) tableId] The table ID.
      * @param:      [(boolean) readName] Setting to true to overwrite the current table name.
      * @param:      [(boolean) readField] Setting to true to overwrite the current field configuration.
+     * @retval:     [Table] "this" is returned.
      */
-    public void deserialize(String str, int tableId, boolean readName, boolean readField) {
+    public Table deserialize(String str, int tableId, boolean readName, boolean readField) {
         if (readField)
             fields = new HashMap<String, Class<?>>();
         rows = new ArrayList<Map<String, Object>>();
@@ -188,7 +197,7 @@ public class Table {
             }
             if (strKey.equals(prefix + ".rowNum")) {
                 for (int i = 0; i < Integer.parseInt(strValue); i++) {
-                    addRow();
+                    addRow(null);
                 }
             }
             if (readField && strKey.startsWith(prefix + ".field.")) {
@@ -213,6 +222,7 @@ public class Table {
                 setValue(rowId, fieldName, Types.deserialize(strValue, fieldType));
             }
         }
+        return this;
     }
 
     /*
@@ -240,14 +250,16 @@ public class Table {
     }
 
     public static void main(String[] args) {
+        Pair<String, Object>[] initializers = (Pair<String, Object>[]) Array.newInstance(Pair.class, 2);
+        initializers[0] = new Pair<String, Object>("name", "Ridge");
+        initializers[1] = new Pair<String, Object>("score", 0);
         Table table = new Table("accounts")
                 .addField("name", String.class)
-                .addField("score", Integer.class);
-        table.addRow();
-        table.addRow();
-        table.setValue(0, "name", "Ridge");
-        table.setValue(0, "score", 0);
-        table.setValue(1, "name", "James");
+                .addField("score", Integer.class)
+                .addRow(initializers)
+                .addRow(null)
+                .setValue(1, "name", "James")
+                .setValue(1, "score", 100);
         String str = table.serialize(0);
         System.out.println(str);
         Table table2 = new Table(0, str);
