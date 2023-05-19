@@ -1,11 +1,12 @@
 package db;
 
+import javafx.util.Pair;
 import util.Base64Helper;
 
 public class Types {
-    private static final Class<?>[] supportedTypes = {
-            Integer.class,
-            String.class
+    private static final Object[] supportedTypes = {
+            new Pair<Class<?>, String>(Integer.class, "Integer"),
+            new Pair<Class<?>, String>(String.class, "String")
     };
 
     /*
@@ -15,11 +16,53 @@ public class Types {
      * @retval:     [boolean] True if the data-type is supported.
      */
     public static boolean isSupported(Class<?> type) {
-        for (Class<?> cls : supportedTypes) {
-            if (cls == type)
+        for (Object typePair : supportedTypes) {
+            if (((Pair<Class<?>, String>) typePair).getKey() == type)
                 return true;
         }
         return false;
+    }
+
+    /*
+     * @public:     isSupported
+     * @note:       Use this method to check if a data-type is supported by the database.
+     * @param:      [(String) type] The string-style data-type.
+     * @retval:     [boolean] True if the data-type is supported.
+     */
+    public static boolean isSupported(String type) {
+        for (Object typePair : supportedTypes) {
+            if (((Pair<Class<?>, String>) typePair).getValue().equalsIgnoreCase(type))
+                return true;
+        }
+        return false;
+    }
+
+    /*
+     * @public:     cls2str
+     * @note:       This method can be used to convert a class-style type to a string-style type.
+     * @param:      [(Class<?>) type] The class-style data-type to be converted.
+     * @retval:     [String] The result string-style data-type.
+     */
+    public static String cls2str(Class<?> type) {
+        for (Object typePair : supportedTypes) {
+            if (((Pair<Class<?>, String>) typePair).getKey() == type)
+                return ((Pair<Class<?>, String>) typePair).getValue();
+        }
+        return null;
+    }
+
+    /*
+     * @public:     str2cls
+     * @note:       This method can be used to convert a string-style type to a class-style type.
+     * @param:      [(String) type] The string-style data-type to be converted.
+     * @retval:     [Class<?>] The result class-style data-type.
+     */
+    public static Class<?> str2cls(String type) {
+        for (Object typePair : supportedTypes) {
+            if (((Pair<Class<?>, String>) typePair).getValue().equalsIgnoreCase(type))
+                return ((Pair<Class<?>, String>) typePair).getKey();
+        }
+        return null;
     }
 
     /*

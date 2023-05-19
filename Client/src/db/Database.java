@@ -8,11 +8,15 @@ public class Database {
 
     private String filePath;
 
-    public String serialize(){
+    public String serialize() {
         return "";
     }
 
-    public void deserialize(){
+    public void deserialize() {
+
+    }
+
+    public static void main(String[] args) {
 
     }
 }
