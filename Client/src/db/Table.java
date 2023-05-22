@@ -2,7 +2,6 @@ package db;
 
 import javafx.util.Pair;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +31,15 @@ public class Table {
      */
     public Table(int tableId, String str) {
         deserialize(str, tableId, true, true);
+    }
+
+    /*
+     * @public:     getTableName
+     * @note:       Get the table's name.
+     * @retval:     [String] The table's name.
+     */
+    public String getTableName() {
+        return tableName;
     }
 
     /*
@@ -226,13 +234,24 @@ public class Table {
     }
 
     /*
+     * @public:     deserialize
+     * @note:       Deserialize the table (simpler version).
+     * @param:      [(String) str] The string-style serialized table.
+     * @retval:     [Table] "this" is returned.
+     */
+    public Table deserialize(String str, boolean readField) {
+        deserialize(str, getTableId(str), false, readField);
+        return this;
+    }
+
+    /*
      * @public:     getTableId
      * @note:       Retrieve the table ID from a string-style serialized table.
      * @param:      [(String) tableName] The table name.
      * @param:      [(String) str] The string-style serialized table.
      * @retval:     [int] The table ID. Value -1 stands for "not found".
      */
-    public static int getTableId(String tableName, String str) {
+    public int getTableId(String str) {
         str = str.replace("\\s", "");
         String[] strSegments = str.split(";");
         for (String strSeg : strSegments) {
@@ -247,23 +266,5 @@ public class Table {
             }
         }
         return -1;
-    }
-
-    public static void main(String[] args) {
-        Pair<String, Object>[] initializers = (Pair<String, Object>[]) Array.newInstance(Pair.class, 2);
-        initializers[0] = new Pair<String, Object>("name", "Ridge");
-        initializers[1] = new Pair<String, Object>("score", 0);
-        Table table = new Table("accounts")
-                .addField("name", String.class)
-                .addField("score", Integer.class)
-                .addRow(initializers)
-                .addRow(null)
-                .setValue(1, "name", "James")
-                .setValue(1, "score", 100);
-        String str = table.serialize(0);
-        System.out.println(str);
-        Table table2 = new Table(0, str);
-        System.out.println(table2.getValue(1, "score"));
-        System.out.println(Table.getTableId("accounts", str));
     }
 }
