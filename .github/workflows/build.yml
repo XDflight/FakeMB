@@ -33,4 +33,4 @@ jobs:
           prerelease: true
           title: 'Auto Development Release'
           files: |
-            ./Client/FakeMB-Client.jar
+            ./Client/FakeMB-Client-x64.jar
