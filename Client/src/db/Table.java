@@ -240,7 +240,10 @@ public class Table {
      * @retval:     [Table] "this" is returned.
      */
     public Table deserialize(String str, boolean readField) {
-        deserialize(str, getTableId(str), false, readField);
+        int tableId = getTableId(str);
+        if (tableId == -1)
+            return this;
+        deserialize(str, tableId, false, readField);
         return this;
     }
 
