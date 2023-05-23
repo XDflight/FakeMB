@@ -14,7 +14,7 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt-openj9'
-          java-package: 'jdk'
+          java-package: 'jdk+fx'
           architecture: 'x64'
           check-latest: false
       - name: Build Client JAR
