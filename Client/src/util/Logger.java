@@ -16,9 +16,13 @@ public class Logger {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         out.write(message+"\n");
         out.close();
+
     }
+
+    /** A simple helper method that prints to console and keeps a record at same time **/
     private void message(String in){
         System.out.println(in);
         log2file(in);

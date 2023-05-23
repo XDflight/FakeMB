@@ -1,11 +1,10 @@
 package util;
 
-import com.sun.xml.internal.ws.wsdl.writer.UsingAddressing;
-import commands.UserCommand;
 
 import java.util.ArrayList;
 
-public class StringHelper {
+public class StringHelper{
+    /** Dis-assemble string into its part-string components **/
     public static ArrayList<String> breakDownString(String rawString){
 
         ArrayList<String>atoms=new ArrayList<>();
