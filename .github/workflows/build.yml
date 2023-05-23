@@ -17,6 +17,7 @@ jobs:
       - name: Build Client JAR
         working-directory: ./Client
         run: |
+          mkdir target
           javac src/Launcher.java -d target
           jar -cvfm FakeMB-Client.jar META-INF/MENIFEST.MF *
       - name: Automatic Releases
