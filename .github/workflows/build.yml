@@ -14,7 +14,7 @@ jobs:
         with:
           java-version: '8'
           distribution: 'oracle'
-          java-package: 'jdk+fx'
+          java-package: 'jdk'
           architecture: 'x64'
           check-latest: false
       - name: Build Client JAR
