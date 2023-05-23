@@ -13,8 +13,8 @@ jobs:
         uses: actions/setup-java@v2.5.1
         with:
           java-version: '8'
-          distribution: 'oracle'
-          java-package: 'jdk'
+          distribution: 'temurin'
+          java-package: 'jdk+fx'
           architecture: 'x64'
           check-latest: false
       - name: Build Client JAR
