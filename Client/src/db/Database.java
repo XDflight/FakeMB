@@ -96,6 +96,8 @@ public class Database {
             }
             reader.close();
             fip.close();
+        } catch (FileNotFoundException e) {
+            return this;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,6 +105,12 @@ public class Database {
     }
 
     public static void main(String[] args) {
+        Database db3 = new Database()
+                .addTable(new Table("accounts")
+                        .addField("name", String.class)
+                        .addField("score", Integer.class)
+                ).deserialize("testdb.txt");
+        System.out.println((Integer) db3.getTable("accounts").getValue(0, "score"));
         // Create a database.
         Database db = new Database()
                 // Add a table, named "accounts".
