@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-    - master
+      - master
 jobs:
   build-jar-package:
     runs-on: macos-11
