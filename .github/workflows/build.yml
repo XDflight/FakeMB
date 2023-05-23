@@ -15,11 +15,12 @@ jobs:
           architecture: 'x64'
           check-latest: false
       - name: Build Client JAR
-        working-directory: ./Client
+        working-directory: ./Client/src
         run: |
-          mkdir target
-          javac src/Launcher.java -d target
-          jar -cvfm FakeMB-Client.jar META-INF/MENIFEST.MF *
+          mkdir ../target
+          javac Launcher.java -d ../target
+          cd ../target
+          jar -cvfm ../FakeMB-Client-x64.jar ../META-INF/MENIFEST.MF *
       - name: Automatic Releases
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
