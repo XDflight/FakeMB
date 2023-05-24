@@ -171,6 +171,18 @@ public class Table {
         }
         return target;
     }
+    public Map<String, Object> getRow(int rowIndex){
+        return rows.get(rowIndex);
+    }
+    public Map<String, Object> setRow(int rowIndex,Map<String, Object> row){
+        return rows.set(rowIndex,row);
+    }
+    public void addRow(int rowIndex,Map<String, Object> row){
+        rows.add(rowIndex,row);
+    }
+    public void addRow(Map<String, Object> row){
+        addRow(rows.size(),row);
+    }
 
     /*
      * @public:     serialize
