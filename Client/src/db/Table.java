@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class Table {
     private String tableName;
@@ -149,6 +150,26 @@ public class Table {
         if (!fields.containsKey(fieldName))
             return null;
         return rows.get(rowIndex).get(fieldName);
+    }
+    public List<Map<String, Object>> getEntries(Predicate<Map<String, Object>> conditions){
+        List<Map<String, Object>> targets=new ArrayList<>();
+        for (Map<String, Object> entry:
+             rows) {
+            if(conditions.test(entry)){
+                targets.add(entry);
+            }
+        }
+        return targets;
+    }
+    public Map<String, Object> getEntry(Predicate<Map<String, Object>> conditions){
+        Map<String, Object> target = null;
+        for (Map<String, Object> entry:
+                rows) {
+            if(conditions.test(entry)){
+                target=entry;
+            }
+        }
+        return target;
     }
 
     /*
