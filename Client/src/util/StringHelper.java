@@ -1,10 +1,10 @@
 package util;
 
+import commands.UserCommand;
 
 import java.util.ArrayList;
 
-public class StringHelper{
-    /** Dis-assemble string into its part-string components **/
+public class StringHelper {
     public static ArrayList<String> breakDownString(String rawString){
 
         ArrayList<String>atoms=new ArrayList<>();
