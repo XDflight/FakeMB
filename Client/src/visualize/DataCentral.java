@@ -2,8 +2,7 @@ package visualize;
 
 import db.Database;
 import db.Table;
-
-import javax.xml.crypto.Data;
+import visualize.awake.AccountData;
 
 public class DataCentral {
     public static String dataLocation="/data/svDb";
@@ -14,8 +13,7 @@ public class DataCentral {
     public static void saveChanges(){
         dataBaseAtlas.serialize(dataLocation);
     }
-    public static void registerTables(){
-        registerTable(AccountManager.tableSynced);
-        registerTable(PersonaManager.tableSynced);
+    public static void initialize(){
+        DataManager<AccountData> AccountManager=new DataManager<>(new AccountData());
     }
 }
