@@ -22,8 +22,7 @@ public class UserCommand {
                                     )
                             )
                     )
-            )
-            .then(Command.dataOperation(AccountData.class,true));
+            );
 
 
     public static void register(Command root){
