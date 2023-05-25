@@ -1,10 +1,8 @@
 package visualize;
 
 import db.Table;
-import security.HashTool;
 import visualize.awake.dataClass;
 
-import javax.xml.crypto.Data;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -75,15 +73,15 @@ public class DataManager<T extends dataClass> {
     }
 
     public void setEntry(int rowIndex,dataClass data){
-        tableSynced.setRow(rowIndex,objectToRow(data));
+        tableSynced.setRowRaw(rowIndex,objectToRow(data));
     }
 
     public void addEntry(int rowIndex,dataClass data){
-        tableSynced.addRow(rowIndex,objectToRow(data));
+        tableSynced.addRowRaw(rowIndex,objectToRow(data));
     }
 
     public T getEntry(int rowIndex){
-        Map<String,Object> row=tableSynced.getRow(rowIndex);
+        Map<String,Object> row=tableSynced.getRowRaw(rowIndex);
 
         for (Field field : dataClass.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {

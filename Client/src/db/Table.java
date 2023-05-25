@@ -171,17 +171,17 @@ public class Table {
         }
         return target;
     }
-    public Map<String, Object> getRow(int rowIndex){
+    public Map<String, Object> getRowRaw(int rowIndex){
         return rows.get(rowIndex);
     }
-    public Map<String, Object> setRow(int rowIndex,Map<String, Object> row){
+    public Map<String, Object> setRowRaw(int rowIndex, Map<String, Object> row){
         return rows.set(rowIndex,row);
     }
-    public void addRow(int rowIndex,Map<String, Object> row){
+    public void addRowRaw(int rowIndex,Map<String, Object> row){
         rows.add(rowIndex,row);
     }
-    public void addRow(Map<String, Object> row){
-        addRow(rows.size(),row);
+    public void addRowRaw(Map<String, Object> row){
+        addRowRaw(rows.size(),row);
     }
 
     /*
@@ -238,7 +238,7 @@ public class Table {
             }
             if (strKey.equals(prefix + ".rowNum")) {
                 for (int i = 0; i < Integer.parseInt(strValue); i++) {
-                    addRow(null);
+                    addRowRaw(null);
                 }
             }
             if (readField && strKey.startsWith(prefix + ".field.")) {
