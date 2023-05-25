@@ -1,8 +1,8 @@
-package visualize;
+package server;
 
 import db.Database;
 import db.Table;
-import visualize.data.AccountData;
+import server.structs.AccountData;
 
 public class DataCentral {
     public static String dataLocation="/data/svDb.txt";
@@ -13,7 +13,6 @@ public class DataCentral {
     public static void saveChanges(){
         dataBaseAtlas.serialize(dataLocation);
     }
-
     static DataManager<AccountData> accountManager=new DataManager<>(new AccountData());
     static DataManager<AccountData> personaManager=new DataManager<>(new AccountData());
 }

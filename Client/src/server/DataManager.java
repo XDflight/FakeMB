@@ -1,14 +1,14 @@
-package visualize;
+package server;
 
 import db.Table;
-import visualize.data.dataClass;
+import server.structs.dataClass;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-import static visualize.DataCentral.registerTable;
+import static server.DataCentral.registerTable;
 
 public class DataManager<T extends dataClass> {
     dataClass templateDataClass;
@@ -24,6 +24,7 @@ public class DataManager<T extends dataClass> {
         registerTable(tableSynced);
         for (Field field : dataClass.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {
+                System.out.println("data manager");
                 System.out.println("Found non-static field: " + field.getName());
                 tableSynced.addField(field.getName(),field.getClass());
             }

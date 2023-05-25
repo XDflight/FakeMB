@@ -1,4 +1,4 @@
-package visualize.data;
+package server.structs;
 
 public class AccountData extends dataClass{
     public String userName;

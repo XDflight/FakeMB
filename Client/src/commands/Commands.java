@@ -20,7 +20,12 @@ public class Commands {
         Context parameter=new Context();
         for (String param:
                 params) {
+            System.out.println("1:"+commandProcedure);
             commandProcedure=commandProcedure.progress(param);
+            System.out.println("2:"+commandProcedure);
+            if(commandProcedure==null){
+                break;
+            }
             if(commandProcedure instanceof CommandInput){
                 parameter.add(commandProcedure.name,((CommandInput) commandProcedure).type,param);
             }

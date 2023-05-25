@@ -3,11 +3,17 @@ package commandCore;
 import security.LoginStatus;
 import security.OperatorLevel;
 import util.Logger;
+import server.structs.dataClass;
+import util.ReflectHelper;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import static util.StringHelper.getTrueTypeString;
 
 public class Command {
     public String name;
@@ -27,7 +33,35 @@ public class Command {
     public boolean isEnd() {
         return !hasFork;
     }
+    public String toString(){
+        return children.toString();
+    }
+    public static Command dataOperation(Class<?> dataType,boolean checkOrAdd){
+        Command command = new CommandFork(
+                "create"+getTrueTypeString(dataType.getTypeName())
+        );
+        return command.consumeVars(ReflectHelper.getFields(dataType),checkOrAdd);
+    }
+    public Command consumeVars(ArrayList<Field> abs,boolean checkOrAdd){
+        if(abs.size()<=0){
+            this.end(
+                    context -> {
+                        if(checkOrAdd){
 
+                            System.out.println("checked object");
+                        }else{
+                            System.out.println("added object");
+                        }
+                    },
+                    0
+            );
+        }else{
+            Command command= new CommandInput(abs.get(0).getName(),abs.get(0).getClass().toString());
+            abs.remove(0);
+            this.then(command.consumeVars(abs,checkOrAdd));
+        }
+        return this;
+    }
     public Command then(Command in) {
         if(in instanceof CommandInput){
             if(isParameterStarter){

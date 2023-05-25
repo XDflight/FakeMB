@@ -3,9 +3,13 @@ package commands;
 import commandCore.Command;
 import commandCore.CommandFork;
 import commandCore.CommandInput;
+import server.structs.AccountData;
+
+import java.net.CookieHandler;
 
 public class UserCommand {
     static Command userCommand=new CommandFork("user")
+
             .then(new CommandFork("register")
                     .then(new CommandInput("account","String")
                             .then(new CommandInput("password","String")
@@ -19,7 +23,7 @@ public class UserCommand {
                             )
                     )
             )
-            .then(new CommandFork("login"));
+            .then(Command.dataOperation(AccountData.class,true));
 
 
     public static void register(Command root){
