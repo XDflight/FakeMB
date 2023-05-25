@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import static server.structs.dataClass.fromRow;
 import static util.StringHelper.getTrueTypeString;
 
 public class Command {
@@ -37,17 +38,20 @@ public class Command {
         return children.toString();
     }
     public static Command dataOperation(Class<?> dataType,boolean checkOrAdd){
+        String prefix=checkOrAdd?"login":"register";
         Command command = new CommandFork(
-                "create"+getTrueTypeString(dataType.getTypeName())
+                prefix+getTrueTypeString(dataType.getTypeName())
         );
-        return command.consumeVars(ReflectHelper.getFields(dataType),checkOrAdd);
+        return command.consumeVars(dataType,ReflectHelper.getFields(dataType),checkOrAdd);
     }
-    public Command consumeVars(ArrayList<Field> abs,boolean checkOrAdd){
+    public Command consumeVars(Class<?> dataType,ArrayList<Field> abs,boolean checkOrAdd){
         if(abs.size()<=0){
             this.end(
                     context -> {
-                        if(checkOrAdd){
 
+                        Object entry=fromRow(dataType,context.parameters);
+                        System.out.println(entry);
+                        if(checkOrAdd){
                             System.out.println("checked object");
                         }else{
                             System.out.println("added object");
@@ -58,7 +62,7 @@ public class Command {
         }else{
             Command command= new CommandInput(abs.get(0).getName(),abs.get(0).getClass().toString());
             abs.remove(0);
-            this.then(command.consumeVars(abs,checkOrAdd));
+            this.then(command.consumeVars(dataType,abs,checkOrAdd));
         }
         return this;
     }

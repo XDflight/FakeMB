@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class Table {
@@ -182,6 +184,12 @@ public class Table {
     }
     public void addRowRaw(Map<String, Object> row){
         addRowRaw(rows.size(),row);
+    }
+    public void forEach(Consumer<Map<String,Object>> mapConsumer){
+        for (Map<String,Object> row:
+             rows) {
+            mapConsumer.accept(row);
+        }
     }
 
     /*

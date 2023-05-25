@@ -34,9 +34,13 @@ public class Commands {
                 commandProcedure.run(parameter);
             }
         }
-        if(!commandProcedure.isEnd()){
-            System.out.println("命令不完整！");
+        if(commandProcedure==null){
+            System.out.println("Command non-existance");
+            return;
         }
-        //特有的叹号
+        if(!commandProcedure.isEnd()){
+            System.out.println("Command is incomplete");
+            return;
+        }
     }
 }
