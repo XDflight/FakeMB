@@ -1,48 +1,43 @@
 package commands;
 
-import commandCore.Command;
-import commandCore.CommandFork;
-import commandCore.CommandInput;
-import commandCore.Context;
-import commands.TeacherCommand;
-import commands.UserCommand;
+import commandNodes.CommandNode;
+import commandNodes.CommandNodeFork;
+import commandNodes.CommandNodeInput;
+import commandNodes.Context;
 
 import java.util.ArrayList;
 
 public class Commands {
 
-    public static Command rootCommand=new CommandFork("root");
+    public static CommandNode rootCommandNode =new CommandNodeFork("root");
     static{
-        TeacherCommand.register(rootCommand);
-        UserCommand.register(rootCommand);
+        TeacherCommand.register(rootCommandNode);
+        UserCommand.register(rootCommandNode);
     }
     public static void parseCommand(ArrayList<String> params){
-        Command commandProcedure=rootCommand;
+        CommandNode commandNode = rootCommandNode;
         Context parameter=new Context();
         for (String param:
                 params) {
-            System.out.println("1:"+commandProcedure.name);
-            System.out.println("1:"+commandProcedure);
-            commandProcedure=commandProcedure.progress(param);
-            if(commandProcedure==null){
+//            System.out.println(commandNode.toStringTop());
+            commandNode = commandNode.progress(param);
+            if(commandNode ==null){
                 break;
             }
-            System.out.println("2:"+commandProcedure.name);
-            System.out.println("2:"+commandProcedure);
-            if(commandProcedure instanceof CommandInput){
-                parameter.add(commandProcedure.name,((CommandInput) commandProcedure).type,param);
+            System.out.println(commandNode.toStringTop());
+            if(commandNode instanceof CommandNodeInput){
+                parameter.add(commandNode.name,((CommandNodeInput) commandNode).type,param);
             }
-//            System.out.println("Procedure: "+commandProcedure.name);
-            if(commandProcedure.isEnd()){
-                commandProcedure.run(parameter);
+            if(commandNode.isEnd()){
+                commandNode.run(parameter);
                 break;
             }
         }
-        if(commandProcedure==null){
+        if(commandNode ==null){
             System.out.println("Command non-existance");
             return;
         }
-        if(!commandProcedure.isEnd()){
+        if(!commandNode.isEnd()){
             System.out.println("Command is incomplete");
             return;
         }

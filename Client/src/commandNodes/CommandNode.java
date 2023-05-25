@@ -1,7 +1,9 @@
-package commandCore;
+package commandNodes;
 
+import javafx.util.Pair;
 import security.LoginStatus;
 import security.OperatorLevel;
+import server.DataManager;
 import util.Logger;
 import server.structs.dataClass;
 import util.ReflectHelper;
@@ -16,12 +18,12 @@ import java.util.function.Predicate;
 import static server.structs.dataClass.fromRow;
 import static util.StringHelper.getTrueTypeString;
 
-public class Command {
+public class CommandNode {
     public String name;
     private Consumer<Context> executable;
     private Predicate<LoginStatus> hasPower;
 
-    Map<String,Command> children=new HashMap<>();
+    Map<String, CommandNode> children=new HashMap<>();
     boolean hasFork=false;
     boolean isParameterStarter=false;
     String nextParameter;
@@ -34,40 +36,44 @@ public class Command {
     public boolean isEnd() {
         return !hasFork;
     }
+    public String toStringTop(){
+        return name+"\n"+children.toString();
+    }
     public String toString(){
         return children.toString();
     }
-    public static Command dataOperation(Class<?> dataType,boolean checkOrAdd){
+    public static CommandNode dataOperation(DataManager dataManager, Class<?> dataType, boolean checkOrAdd){
         String prefix=checkOrAdd?"login":"register";
-        Command command = new CommandFork(
+        CommandNode commandNode = new CommandNodeFork(
                 prefix+getTrueTypeString(dataType.getTypeName())
         );
-        return command.consumeVars(dataType,ReflectHelper.getFields(dataType),checkOrAdd);
+        return commandNode.consumeVars(dataManager, dataType,ReflectHelper.getFields(dataType),checkOrAdd);
     }
-    public Command consumeVars(Class<?> dataType,ArrayList<Field> abs,boolean checkOrAdd){
+    public CommandNode consumeVars(DataManager dataManager, Class<?> dataType, ArrayList<Field> abs, boolean checkOrAdd){
         if(abs.size()<=0){
             this.end(
                     context -> {
-
                         Object entry=fromRow(dataType,context.parameters);
                         System.out.println(entry);
                         if(checkOrAdd){
+                            System.out.println( dataManager.hasEntry((dataClass) entry));
                             System.out.println("checked object");
                         }else{
+                            dataManager.addEntry((dataClass) entry);
                             System.out.println("added object");
                         }
                     },
                     0
             );
         }else{
-            Command command= new CommandInput(abs.get(0).getName(),abs.get(0).getClass().toString());
+            CommandNode commandNode = new CommandNodeInput(abs.get(0).getName(),abs.get(0).getClass().toString());
             abs.remove(0);
-            this.then(command.consumeVars(dataType,abs,checkOrAdd));
+            this.then(commandNode.consumeVars(dataManager,dataType,abs,checkOrAdd));
         }
         return this;
     }
-    public Command then(Command in) {
-        if(in instanceof CommandInput){
+    public CommandNode then(CommandNode in) {
+        if(in instanceof CommandNodeInput){
             if(isParameterStarter){
                 try {
                     throw new Exception("Multiple Parameter Fork, unable to handle");
@@ -83,7 +89,7 @@ public class Command {
         hasFork=true;
         return this;
     }
-    public Command end(Consumer<Context> in){
+    public CommandNode end(Consumer<Context> in){
         executable=in;
         OperatorLevel operatorLevel = OperatorLevel.ADMIN;
         Predicate<LoginStatus> predicate=(status)-> {
@@ -92,7 +98,7 @@ public class Command {
         hasPower=predicate;
         return this;
     }
-    public Command end(Consumer<Context> in,int level){
+    public CommandNode end(Consumer<Context> in, int level){
         executable=in;
         OperatorLevel operatorLevel = OperatorLevel.ADMIN;
         Predicate<LoginStatus> predicate=(status)-> {
@@ -101,19 +107,19 @@ public class Command {
         hasPower=predicate;
         return this;
     }
-    public Command end(Consumer<Context> in, Predicate<LoginStatus> predicate){
+    public CommandNode end(Consumer<Context> in, Predicate<LoginStatus> predicate){
         executable=in;
         hasPower=predicate;
         return this;
     }
-    public Command progress(String in){
+    public CommandNode progress(String in){
         if(isParameterStarter){
             return progress();
         }else{
             return children.containsKey(in)? children.get(in):null;
         }
     }
-    public Command progress(){
+    public CommandNode progress(){
         return children.get(nextParameter);
     }
     public void run(Context params){

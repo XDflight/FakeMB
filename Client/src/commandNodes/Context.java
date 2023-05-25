@@ -1,4 +1,4 @@
-package commandCore;
+package commandNodes;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -2,6 +2,7 @@ package server;
 
 import db.Table;
 import server.structs.dataClass;
+import util.ReflectHelper;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -26,33 +27,18 @@ public class DataManager {
         registerTable(tableSynced);
         for (Field field : dataClass.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {
-                System.out.println("data manager");
-                System.out.println("Found non-static field: " + field.getName());
                 tableSynced.addField(field.getName(),field.getClass());
             }
         }
     }
 
     public DataManager(Class<?> classIn) {
-        Class<?> clazz = classIn;
-        Constructor<?> ctor = null;
-        try {
-            ctor = clazz.getConstructor();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        try {
-            templateDataClass = (server.structs.dataClass) ctor.newInstance(new Object[] {  });
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        templateDataClass= (dataClass) ReflectHelper.classInstance(classIn);
         dataClass = classIn;
         tableSynced=new Table(templateDataClass.getClass().toString());
         registerTable(tableSynced);
         for (Field field : dataClass.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {
-                System.out.println("data manager");
-                System.out.println("Found non-static field: " + field.getName());
                 tableSynced.addField(field.getName(),field.getClass());
             }
         }
