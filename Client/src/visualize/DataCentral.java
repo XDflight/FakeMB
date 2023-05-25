@@ -2,10 +2,10 @@ package visualize;
 
 import db.Database;
 import db.Table;
-import visualize.awake.AccountData;
+import visualize.data.AccountData;
 
 public class DataCentral {
-    public static String dataLocation="/data/svDb";
+    public static String dataLocation="/data/svDb.txt";
     public static Database dataBaseAtlas=new Database();
     public static void registerTable(Table dataTable){
         dataBaseAtlas.addTable(dataTable);
@@ -13,7 +13,7 @@ public class DataCentral {
     public static void saveChanges(){
         dataBaseAtlas.serialize(dataLocation);
     }
-    public static void initialize(){
-        DataManager<AccountData> AccountManager=new DataManager<>(new AccountData());
-    }
+
+    static DataManager<AccountData> accountManager=new DataManager<>(new AccountData());
+    static DataManager<AccountData> personaManager=new DataManager<>(new AccountData());
 }

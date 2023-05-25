@@ -1,5 +1,7 @@
 package db;
 
+import javafx.util.Pair;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,7 +121,7 @@ public class Database {
                         .addField("name", String.class)
                         .addField("score", Integer.class)
                         // Add three blank rows.
-                        .addRow(null).addRow(null).addRow(null)
+                        .addRow(null).addRow(null).addRow((Pair<String, Object>[]) null)
                         // Set some values into the table.
                         .setValue(0, "name", "Ridge")
                         .setValue(0, "score", 0)

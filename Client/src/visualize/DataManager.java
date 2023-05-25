@@ -1,7 +1,7 @@
 package visualize;
 
 import db.Table;
-import visualize.awake.dataClass;
+import visualize.data.dataClass;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -43,7 +43,6 @@ public class DataManager<T extends dataClass> {
                 }
             }
         }
-
         return row;
     }
 
@@ -78,6 +77,10 @@ public class DataManager<T extends dataClass> {
 
     public void addEntry(int rowIndex,dataClass data){
         tableSynced.addRowRaw(rowIndex,objectToRow(data));
+    }
+
+    public void addEntry(dataClass data){
+        tableSynced.addRowRaw(objectToRow(data));
     }
 
     public T getEntry(int rowIndex){
