@@ -1,13 +1,13 @@
 package commands;
 
-import commandCore.Command;
-import commandCore.CommandFork;
+import commandNodes.CommandNode;
+import commandNodes.CommandNodeFork;
 
 public class TeacherCommand {
-    static Command teacherCommand=new CommandFork("teacher")
-            .then(new CommandFork("login"))
-            .then(new CommandFork("register"));
-    public static void register(Command root){
-        root.then(teacherCommand);
+    static CommandNode teacherCommandNode =new CommandNodeFork("teacher")
+            .then(new CommandNodeFork("login"))
+            .then(new CommandNodeFork("register"));
+    public static void register(CommandNode root){
+        root.then(teacherCommandNode);
     }
 }

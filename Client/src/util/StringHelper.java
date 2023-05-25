@@ -5,6 +5,18 @@ import commands.UserCommand;
 import java.util.ArrayList;
 
 public class StringHelper {
+    public static String getTrueTypeString(String rawString){
+        int keyFrame=indexOf_last(rawString,".");
+        return rawString.substring(keyFrame+1);
+    }
+    public static int indexOf_last(String in,String pattern){
+        for (int i = in.length()-pattern.length(); i >= 0 ; i--) {
+            if(in.startsWith(pattern, i)){
+                return i;
+            }
+        }
+        return -1;
+    }
     public static ArrayList<String> breakDownString(String rawString){
 
         ArrayList<String>atoms=new ArrayList<>();

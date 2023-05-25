@@ -1,14 +1,15 @@
 package commands;
 
-import commandCore.Command;
-import commandCore.CommandFork;
-import commandCore.CommandInput;
+import commandNodes.CommandNode;
+import commandNodes.CommandNodeFork;
+import commandNodes.CommandNodeInput;
 
 public class UserCommand {
-    static Command userCommand=new CommandFork("user")
-            .then(new CommandFork("register")
-                    .then(new CommandInput("account","String")
-                            .then(new CommandInput("password","String")
+    static CommandNode userCommandNode =new CommandNodeFork("user")
+
+            .then(new CommandNodeFork("register")
+                    .then(new CommandNodeInput("account","String")
+                            .then(new CommandNodeInput("password","String")
                                     .end(context -> {
                                             registerAccount(
                                                     (String)context.get("account"),
@@ -18,12 +19,11 @@ public class UserCommand {
                                     )
                             )
                     )
-            )
-            .then(new CommandFork("login"));
+            );
 
 
-    public static void register(Command root){
-        root.then(userCommand);
+    public static void register(CommandNode root){
+        root.then(userCommandNode);
     }
     public static void registerAccount(String account,String password){
         System.out.println("Registered Account "+account+" with password "+password);

@@ -1,31 +1,35 @@
-import commandCore.*;
+import commandNodes.*;
 import db.Database;
-import security.OperatorLevel;
-import systematic.School;
-import systematic.Student;
+import server.structs.AccountData;
+import server.structs.PersonaData;
 import util.Logger;
 import util.StringHelper;
-import visualize.DataCentral;
+import server.DataCentral;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 import static commands.Commands.parseCommand;
+import static server.DataCentral.registerDataType;
 
 public class Main {
     public static Database db = new Database();
 
-    static Command rootCommand = new Command();
+    static CommandNode rootCommandNode = new CommandNode();
     static Logger LOGGER = new Logger();
 
-    static DataCentral dataCentral=new DataCentral();
+
+    public static void initialize(){
+        DataCentral.registerDataType(AccountData.class);
+        DataCentral.registerDataType(PersonaData.class);
+    }
 
     public static void main(String[] args) {
+        initialize();
         Scanner puller = new Scanner(System.in);
-
+        System.out.println("Welcome to stupidity shell.");
         while (true) {
             String userInput = puller.nextLine();
-            ArrayList<String> params = StringHelper.breakDownString(userInput);
+//            ArrayList<String> params = StringHelper.breakDownString(userInput);
             parseCommand(StringHelper.breakDownString(userInput));
         }
 
