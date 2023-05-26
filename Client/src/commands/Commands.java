@@ -23,7 +23,7 @@ public class Commands {
             if(commandNode ==null){
                 break;
             }
-            System.out.println(commandNode.toStringTop());
+//            System.out.println(commandNode.toStringTop());
             if(commandNode instanceof CommandNodeInput){
                 parameter.add(commandNode.name,((CommandNodeInput) commandNode).type,param);
             }

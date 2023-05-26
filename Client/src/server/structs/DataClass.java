@@ -2,20 +2,18 @@ package server.structs;
 
 import security.HashTool;
 import server.structs.annotations.HashElement;
-import util.Base64Helper;
 import util.ReflectHelper;
 
+import javax.xml.crypto.Data;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 
-public class dataClass {
-    public dataClass makeClone(){
-        dataClass clone=new dataClass();
+public class DataClass {
+    public DataClass makeClone(){
+        Object clone=ReflectHelper.classInstance(this.getClass());
         for (Field field : this.getClass().getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {
-                String fieldName=field.getName();
-                System.out.println("Found non-static field: " + fieldName);
                 try {
                     field.set(clone,field.get(this));
                 } catch (IllegalAccessException e) {
@@ -23,9 +21,9 @@ public class dataClass {
                 }
             }
         }
-        return clone;
+        return (DataClass) clone;
     }
-    public boolean fullEqual(dataClass somebodyElse){
+    public boolean fullEqual(DataClass somebodyElse){
         for (Field field : this.getClass().getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {
                 try {
@@ -71,6 +69,9 @@ public class dataClass {
         }
         return dataEntry;
     }
+    public String safeToString(Object in){
+        return in==null? "null" : in.toString();
+    }
     public String toString(){
         StringBuilder append = new StringBuilder();
         for (Field field : this.getClass().getDeclaredFields()) {
@@ -80,7 +81,7 @@ public class dataClass {
                             .append("{")
                             .append(field.getName())
                             .append(":")
-                            .append(field.get(this).toString())
+                            .append(safeToString(field.get(this)))
                             .append("}")
                             .append("\n");
                 } catch (IllegalAccessException e) {

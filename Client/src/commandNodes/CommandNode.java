@@ -1,11 +1,10 @@
 package commandNodes;
 
-import javafx.util.Pair;
 import security.LoginStatus;
 import security.OperatorLevel;
 import server.DataManager;
 import util.Logger;
-import server.structs.dataClass;
+import server.structs.DataClass;
 import util.ReflectHelper;
 
 import java.lang.reflect.Field;
@@ -15,8 +14,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static server.structs.dataClass.fromParam;
-import static server.structs.dataClass.fromRow;
+import static server.structs.DataClass.fromParam;
 import static util.StringHelper.getTrueTypeString;
 
 public class CommandNode {
@@ -57,10 +55,10 @@ public class CommandNode {
                         Object entry=fromParam(dataType,context.parameters);
                         System.out.println(entry);
                         if(checkOrAdd){
-                            System.out.println( dataManager.hasEntry((dataClass) entry));
+                            System.out.println( dataManager.hasEntry((DataClass) entry));
                             System.out.println("checked object");
                         }else{
-                            dataManager.addEntry((dataClass) entry);
+                            dataManager.addEntry((DataClass) entry);
                             System.out.println("added object");
                         }
                     },

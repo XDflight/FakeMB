@@ -3,7 +3,7 @@ package server;
 import commandNodes.CommandNode;
 import db.Database;
 import db.Table;
-import server.structs.dataClass;
+import server.structs.DataClass;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,14 +25,14 @@ public class DataCentral {
         rootCommandNode.then(CommandNode.dataOperation(dataManagers.get(classIn),classIn,true));
         rootCommandNode.then(CommandNode.dataOperation(dataManagers.get(classIn),classIn,false));
     }
-    public static void registerDataType(dataClass classObjectIn){
+    public static void registerDataType(DataClass classObjectIn){
         Class<?> classIn=classObjectIn.getClass();
         registerDataType(classIn);
     }
-    public static void pushData(dataClass data){
+    public static void pushData(DataClass data){
         dataManagers.get(data.getClass()).addEntry(data);
     }
-    public static boolean hasData(dataClass data){
+    public static boolean hasData(DataClass data){
         return dataManagers.get(data.getClass()).hasEntry(data);
     }
 }

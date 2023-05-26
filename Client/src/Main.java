@@ -2,6 +2,7 @@ import commandNodes.*;
 import db.Database;
 import server.structs.AccountData;
 import server.structs.PersonaData;
+import tests.Debugger;
 import util.Logger;
 import util.StringHelper;
 import server.DataCentral;
@@ -24,15 +25,13 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        initialize();
-        Scanner puller = new Scanner(System.in);
-        System.out.println("Loading new world.");
-        while (true) {
-            String userInput = puller.nextLine();
-            parseCommand(StringHelper.breakDownString(userInput));
-        }
-
+        Debugger.runTest(1);
+//        initialize();
+//        Scanner puller = new Scanner(System.in);
+//        System.out.println("Loading new world.");
+//        while (true) {
+//            String userInput = puller.nextLine();
+//            parseCommand(StringHelper.breakDownString(userInput));
+//        }
     }
-
-
 }

@@ -1,7 +1,5 @@
 package util;
 
-import server.structs.dataClass;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
