@@ -1,7 +1,10 @@
 package server.structs;
 
+import server.structs.annotations.HashElement;
+
 public class AccountData extends dataClass{
-    public String userName="JohnDoe";
-    public String hashPass="114514";
-    public String school_id="1919810";
+    public String userName;
+    @HashElement(hashType = "SHA-256")
+    public String hashPass;
+    public String school_id;
 }

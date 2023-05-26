@@ -1,5 +1,8 @@
 package server.structs;
 
+import security.HashTool;
+import server.structs.annotations.HashElement;
+import util.Base64Helper;
 import util.ReflectHelper;
 
 import java.lang.reflect.Field;
@@ -44,6 +47,23 @@ public class dataClass {
             if (!Modifier.isStatic(field.getModifiers())) {
                 try {
                     field.set(dataEntry,row.get(field.getName()));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return dataEntry;
+    }
+    public static Object fromParam(Class<?> classIn,Map<String,Object> row){
+        Object dataEntry = ReflectHelper.classInstance(classIn);
+        for (Field field : classIn.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                Object fieldVal=row.get(field.getName());
+                if(field.isAnnotationPresent(HashElement.class) && fieldVal instanceof String){
+                    fieldVal= HashTool.generate((String) fieldVal,field.getDeclaredAnnotationsByType(HashElement.class)[0].hashType());
+                }
+                try {
+                    field.set(dataEntry,fieldVal);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }

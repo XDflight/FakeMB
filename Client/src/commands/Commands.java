@@ -19,7 +19,6 @@ public class Commands {
         Context parameter=new Context();
         for (String param:
                 params) {
-//            System.out.println(commandNode.toStringTop());
             commandNode = commandNode.progress(param);
             if(commandNode ==null){
                 break;

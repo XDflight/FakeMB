@@ -26,10 +26,9 @@ public class Main {
     public static void main(String[] args) {
         initialize();
         Scanner puller = new Scanner(System.in);
-        System.out.println("Welcome to stupidity shell.");
+        System.out.println("Loading new world.");
         while (true) {
             String userInput = puller.nextLine();
-//            ArrayList<String> params = StringHelper.breakDownString(userInput);
             parseCommand(StringHelper.breakDownString(userInput));
         }
 

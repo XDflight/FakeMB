@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import static server.structs.dataClass.fromParam;
 import static server.structs.dataClass.fromRow;
 import static util.StringHelper.getTrueTypeString;
 
@@ -53,7 +54,7 @@ public class CommandNode {
         if(abs.size()<=0){
             this.end(
                     context -> {
-                        Object entry=fromRow(dataType,context.parameters);
+                        Object entry=fromParam(dataType,context.parameters);
                         System.out.println(entry);
                         if(checkOrAdd){
                             System.out.println( dataManager.hasEntry((dataClass) entry));
