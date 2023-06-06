@@ -3,6 +3,9 @@ package db;
 import javafx.util.Pair;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +69,12 @@ public class Database {
      */
     public Database serialize(String filePath) {
         try {
+            Path path = Paths.get(filePath);
+            Path parent = path.getParent();
+            if (parent != null && Files.notExists(parent)) {
+                Files.createDirectories(parent);
+            }
+
             FileOutputStream fop = new FileOutputStream(filePath);
             OutputStreamWriter writer = new OutputStreamWriter(fop, "GBK");
             for (int i = 0; i < tableList.size(); i++) {
