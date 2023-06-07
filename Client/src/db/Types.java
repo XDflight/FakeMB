@@ -16,6 +16,7 @@ public class Types {
      * @retval:     [boolean] True if the data-type is supported.
      */
     public static boolean isSupported(Class<?> type) {
+        System.out.println(type);
         for (Object typePair : supportedTypes) {
             if (((Pair<Class<?>, String>) typePair).getKey() == type)
                 return true;

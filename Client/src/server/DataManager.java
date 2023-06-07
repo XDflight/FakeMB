@@ -37,7 +37,9 @@ public class DataManager {
         registerTable(tableSynced);
         for (Field field : dataClass.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {
-                tableSynced.addField(field.getName(),field.getClass());
+                System.out.println("Add Field");
+                //Fixed
+                tableSynced.addField(field.getName(),field.getType());
             }
         }
     }
@@ -87,6 +89,9 @@ public class DataManager {
         boolean[] has = {false};
         tableSynced.forEach(
                 (row)->{
+                    if(row==null){
+                        return;
+                    }
                     if(dataEntry.fullEqual(rowToObject(row))&&!has[0]){
                         has[0] =true;
                     }

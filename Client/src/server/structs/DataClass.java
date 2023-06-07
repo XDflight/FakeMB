@@ -2,6 +2,7 @@ package server.structs;
 
 import security.HashTool;
 import server.structs.annotations.HashElement;
+import server.structs.annotations.UUID;
 import util.ReflectHelper;
 
 import javax.xml.crypto.Data;
@@ -38,6 +39,18 @@ public class DataClass {
             }
         }
         return true;
+    }
+    public boolean equalByUUID(Object UUID) throws Exception{
+        for (Field field : this.getClass().getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                if(field.isAnnotationPresent(UUID.class)){
+                    if(field.get(this).equals(UUID)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
     public static Object fromRow(Class<?> classIn,Map<String,Object> row){
         Object dataEntry = ReflectHelper.classInstance(classIn);

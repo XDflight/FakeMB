@@ -53,10 +53,13 @@ public class Table {
      * @retval:     [Table] "this" is returned.
      */
     public Table addField(String fieldName, Class<?> cls) {
-        if (!Types.isSupported(cls))
+        if (!Types.isSupported(cls)) {
+            System.out.println("unsupported");
             return this;
+        }
         if (fields.containsKey(fieldName))
             return this;
+        System.out.println("put field");
         fields.put(fieldName, cls);
         return this;
     }
@@ -131,6 +134,9 @@ public class Table {
      * @retval:     [Table] "this" is returned.
      */
     public Table setValue(int rowIndex, String fieldName, Object value) {
+        System.out.println("rowIndex:"+rowIndex);
+        System.out.println("fieldName:"+fieldName);
+        System.out.println("objectValue:"+value);
         if (rowIndex < 0 || rowIndex >= rows.size())
             return this;
         if (!fields.containsKey(fieldName))
@@ -183,7 +189,10 @@ public class Table {
         rows.add(rowIndex,row);
     }
     public void addRowRaw(Map<String, Object> row){
+        System.out.println("Add Row Raw");
+        System.out.println(rows);
         addRowRaw(rows.size(),row);
+        System.out.println(rows);
     }
     public void forEach(Consumer<Map<String,Object>> mapConsumer){
         for (Map<String,Object> row:
@@ -199,6 +208,8 @@ public class Table {
      * @retval:     [String] The string-style serialized table.
      */
     public String serialize(int tableId) {
+        System.out.println("table serialize");
+        System.out.println(rows.toString());
         String prefix = "table." + tableId;
         String result = prefix + ".name:" + tableName + ";";
         for (String key : fields.keySet()) {
@@ -209,15 +220,20 @@ public class Table {
         for (int i = 0; i < getRowNum(); i++) {
             Map<String, Object> row = rows.get(i);
             for (String key : row.keySet()) {
+                System.out.println("key:"+key);
                 Object obj = row.get(key);
                 if (obj == null)
                     continue;
+                System.out.println(fields.toString());
                 Class<?> cls = fields.get(key);
-                if (cls == null)
+                if (cls == null) {
+                    System.out.println("CLS null");
                     continue;
+                }
                 result += prefix + ".row." + i + "." + key + ":" + Types.serialize(obj, cls) + ";";
             }
         }
+        System.out.println("result:"+result);
         return result;
     }
 
@@ -246,7 +262,8 @@ public class Table {
             }
             if (strKey.equals(prefix + ".rowNum")) {
                 for (int i = 0; i < Integer.parseInt(strValue); i++) {
-                    addRowRaw(null);
+                    //Fixed
+                    addRow(null);
                 }
             }
             if (readField && strKey.startsWith(prefix + ".field.")) {

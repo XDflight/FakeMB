@@ -22,16 +22,24 @@ public class Main {
     public static void initialize(){
         DataCentral.registerDataType(AccountData.class);
         DataCentral.registerDataType(PersonaData.class);
-    }
 
+        DataCentral.loadDB();
+    }
+    public static void runCommand(String command){
+        parseCommand(StringHelper.breakDownString(command));
+    }
     public static void main(String[] args) {
-        Debugger.runTest(1);
-//        initialize();
-//        Scanner puller = new Scanner(System.in);
-//        System.out.println("Loading new world.");
-//        while (true) {
-//            String userInput = puller.nextLine();
-//            parseCommand(StringHelper.breakDownString(userInput));
-//        }
+//        Debugger.runTest(1);
+        initialize();
+        Scanner puller = new Scanner(System.in);
+        System.out.println("Loading new world.");
+
+//        runCommand("registerAccountData 123 123 123");
+//        runCommand("system db save");
+
+        while (true) {
+            String userInput = puller.nextLine();
+            parseCommand(StringHelper.breakDownString(userInput));
+        }
     }
 }
