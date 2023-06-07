@@ -72,7 +72,7 @@ public class CommandNode {
         return this;
     }
     public CommandNode then(CommandNode in) {
-        if(in instanceof CommandNodeInput){
+        if(in instanceof CommandNodeInput || in instanceof CommandNodeTags){
             if(isParameterStarter){
                 try {
                     throw new Exception("Multiple Parameter Fork, unable to handle");
@@ -84,7 +84,14 @@ public class CommandNode {
                 isParameterStarter=true;
             }
         }
-        children.put(in.name,in);
+        if(children.containsKey(in.name)){
+            for (String key:
+                 in.children.keySet()) {
+                children.get(in.name).then(in.children.get(key));
+            }
+        }else{
+            children.put(in.name,in);
+        }
         hasFork=true;
         return this;
     }

@@ -1,5 +1,6 @@
 import commandNodes.*;
 import db.Database;
+import server.SearchGroup;
 import server.structs.AccountData;
 import server.structs.PersonaData;
 import tests.Debugger;
@@ -36,6 +37,11 @@ public class Main {
 
 //        runCommand("registerAccountData 123 123 123");
 //        runCommand("system db save");
+        runCommand("filter AccountData userName:jam");
+        runCommand("edit AccountData userName:jameres");
+
+        System.out.println("SearchGroup.filteredGroup");
+        System.out.println(SearchGroup.filteredGroup);
 
         while (true) {
             String userInput = puller.nextLine();

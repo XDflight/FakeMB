@@ -1,9 +1,6 @@
 package commands;
 
-import commandNodes.CommandNode;
-import commandNodes.CommandNodeFork;
-import commandNodes.CommandNodeInput;
-import commandNodes.Context;
+import commandNodes.*;
 
 import java.util.ArrayList;
 
@@ -20,20 +17,28 @@ public class Commands {
     public static void parseCommand(ArrayList<String> params) {
         CommandNode commandNode = rootCommandNode;
         Context parameter = new Context();
-        for (String param :
-                params) {
-            commandNode = commandNode.progress(param);
+        double length=params.size();
+        for (int i = 0; i < length; i++) {
+            commandNode = commandNode.progress(params.get(0));
             if (commandNode == null) {
                 break;
             }
+            //debug message
             System.out.println(commandNode.toStringTop());
+            if (commandNode instanceof CommandNodeTags) {
+                for (int j = 0; j < params.size(); j++) {
+                    String[] strSegments = params.get(j).split(":");
+                    parameter.add(strSegments[0],"String",strSegments[1]);
+                }
+            }
             if (commandNode instanceof CommandNodeInput) {
-                parameter.add(commandNode.name, ((CommandNodeInput) commandNode).type, param);
+                parameter.add(commandNode.name, ((CommandNodeInput) commandNode).type, params.get(0));
             }
             if (commandNode.isEnd()) {
                 commandNode.run(parameter);
                 break;
             }
+            params.remove(0);
         }
         if (commandNode == null) {
             System.out.println("Command non-existance");

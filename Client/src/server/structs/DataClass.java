@@ -52,6 +52,51 @@ public class DataClass {
         }
         return false;
     }
+    public boolean filterBy(DataClass filter){
+        for (Field field : this.getClass().getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                try {
+                    Object varChecked=field.get(this);
+                    Object varFilter=field.get(filter);
+                    System.out.println("VarChecked");
+                    System.out.println(varChecked);
+                    System.out.println("VarFilter");
+                    System.out.println(varFilter);
+                    if(varFilter==null){
+                        System.out.println("Continued");
+                        continue;
+                    }
+                    if(varChecked==null){
+                        System.out.println("EmptyError");
+                        return false;
+                    }
+                    if(!varFilter.equals(varChecked)){
+                        System.out.println("MisMatchError");
+                        return false;
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return true;
+    }
+    public boolean editBy(DataClass target){
+        for (Field field : this.getClass().getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                try {
+                    Object varTarget=field.get(target);
+                    if(varTarget==null){
+                        continue;
+                    }
+                    field.set(this,varTarget);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return true;
+    }
     public static Object fromRow(Class<?> classIn,Map<String,Object> row){
         Object dataEntry = ReflectHelper.classInstance(classIn);
         for (Field field : classIn.getDeclaredFields()) {

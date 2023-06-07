@@ -6,8 +6,10 @@ import util.ReflectHelper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static server.DataCentral.registerTable;
 
@@ -16,6 +18,8 @@ public class DataManager {
     final Class dataClass;
 
     Table tableSynced;
+    
+    ArrayList<DataClass> objectArray;
 
     public DataManager(DataClass template){
 
@@ -28,6 +32,40 @@ public class DataManager {
                 tableSynced.addField(field.getName(),field.getClass());
             }
         }
+    }
+    public void loadToTable(){
+        for (int i = 0; i < objectArray.size(); i++) {
+            tableSynced.setRowRaw(i,objectToRow(objectArray.get(i)));
+        }
+    }
+    
+    public void loadFromTable(){
+        objectArray=new ArrayList<>();
+        tableSynced.forEach((row)->{
+            DataClass rowObject=rowToObject(row);
+            objectArray.add(rowObject);
+        });
+        System.out.println("object array");
+        System.out.println(objectArray);
+    }
+    public ArrayList<DataClass> filterBy(DataClass filter){
+        ArrayList<DataClass> result=new ArrayList<>();
+        System.out.println("Filtered Object Array");
+        System.out.println(objectArray);
+        System.out.println("Filter");
+        System.out.println(filter);
+        for (DataClass data:
+             objectArray) {
+            System.out.println("Data");
+            System.out.println(data);
+            if(data.filterBy(filter)){
+                System.out.println("Add");
+                result.add(data);
+            }else{
+                System.out.println("MisMatch");
+            }
+        }
+        return result;
     }
 
     public DataManager(Class<?> classIn) {
