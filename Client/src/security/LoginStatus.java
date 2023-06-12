@@ -5,24 +5,32 @@ import systematic.Entity;
 import java.util.UUID;
 
 public class LoginStatus {
+    static String uname;
     static boolean hasAccount;
     static int permissionLevel;
     static long storageLocation;
 
-    public static void loadFromSQL(UUID in){
+    public static void loadFromSQL(UUID in) {
         //do something
     }
 
     public static int getPermissionLevel() {
         return permissionLevel;
     }
+
     public static void setPermissionLevel(int level) {
-        permissionLevel=level;
+        permissionLevel = level;
     }
 
+    public static String getUname() {
+        return uname;
+    }
 
+    public static void setUname(String uname_) {
+        uname = uname_;
+    }
 
     public static boolean hasPermissionLevel(int lvl) {
-        return permissionLevel>=lvl;
+        return permissionLevel >= lvl;
     }
 }
