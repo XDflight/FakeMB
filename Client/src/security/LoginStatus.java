@@ -6,12 +6,10 @@ import java.util.UUID;
 
 public class LoginStatus {
     static String uname;
-    static boolean hasAccount;
     static int permissionLevel;
-    static long storageLocation;
 
-    public static void loadFromSQL(UUID in) {
-        //do something
+    public static boolean loggedIn() {
+        return permissionLevel > 0;
     }
 
     public static int getPermissionLevel() {

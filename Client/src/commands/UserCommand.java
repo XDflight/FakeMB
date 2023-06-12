@@ -24,7 +24,7 @@ public class UserCommand {
             ).then(new CommandNodeFork("login")
                     .then(new CommandNodeFork("status")
                             .end(context -> {
-                                if (LoginStatus.getPermissionLevel() > 0) {
+                                if (LoginStatus.loggedIn()) {
                                     System.out.println("[Status] Already Logged in");
                                     System.out.println("Current User Name: " + LoginStatus.getUname());
                                 } else
@@ -33,6 +33,12 @@ public class UserCommand {
                                 System.out.println("Current Permission Level: " + LoginStatus.getPermissionLevel());
                             }, 0)
                     )
+            ).then(new CommandNodeFork("logout")
+                    .end(context -> {
+                        LoginStatus.setPermissionLevel(0);
+                        LoginStatus.setUname(null);
+                        System.out.println("Logged out.");
+                    }, 0)
             );
 
 
