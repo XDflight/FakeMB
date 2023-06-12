@@ -3,6 +3,8 @@ package commandNodes;
 import security.LoginStatus;
 import security.OperatorLevel;
 import server.DataManager;
+import server.structs.annotations.LoginRequired;
+import server.structs.annotations.RegisterRequired;
 import util.Logger;
 import server.structs.DataClass;
 import util.ReflectHelper;
@@ -41,22 +43,55 @@ public class CommandNode {
     public String toString(){
         return children.toString();
     }
-    public static CommandNode dataOperation(DataManager dataManager, Class<?> dataType, boolean checkOrAdd){
-        String prefix=checkOrAdd?"login":"register";
+    public static CommandNode makeAccountCommands(DataManager dataManager, Class<?> dataType, boolean loginOrRegister){
+        String prefix=loginOrRegister?"login":"register";
         CommandNode commandNode = new CommandNodeFork(
-                prefix+getTrueTypeString(dataType.getTypeName())
+                prefix
         );
-        return commandNode.consumeVars(dataManager, dataType,ReflectHelper.getFields(dataType),checkOrAdd);
+        CommandNode bridgeCommandNode = new CommandNodeFork(
+                "via"
+        );
+        CommandNode subCommandNode = new CommandNodeFork(
+                getTrueTypeString(dataType.getTypeName())
+        );
+        bridgeCommandNode.then(subCommandNode);
+        commandNode.then(bridgeCommandNode);
+
+        ArrayList<Field> vars=ReflectHelper.getFields(dataType);
+        for (int i = vars.size()-1; i >=0; i--) {
+            Field var=vars.get(i);
+            boolean addVarToParams=false;
+            if(var.isAnnotationPresent(LoginRequired.class)&&loginOrRegister){
+                addVarToParams=true;
+            }
+            if(var.isAnnotationPresent(RegisterRequired.class)&&!loginOrRegister){
+                addVarToParams=true;
+            };
+            if(!addVarToParams){
+                vars.remove(i);
+            }
+        }
+        subCommandNode.consumeVars(dataManager, dataType,vars,loginOrRegister);
+        return commandNode;
     }
-    public CommandNode consumeVars(DataManager dataManager, Class<?> dataType, ArrayList<Field> abs, boolean checkOrAdd){
-        if(abs.size()<=0){
+    public CommandNode consumeVars(DataManager dataManager, Class<?> dataType, ArrayList<Field> vars, boolean loginOrRegister){
+        if(vars.size()<=0){
             this.end(
                     context -> {
                         Object entry=fromParam(dataType,context.parameters);
                         System.out.println(entry);
-                        if(checkOrAdd){
-                            System.out.println( dataManager.hasEntry((DataClass) entry));
-                            System.out.println("checked object");
+                        if(loginOrRegister){
+                            boolean hasEntry=dataManager.hasEntry((DataClass) entry);
+                            if(!LoginStatus.hasAccount){
+                                if(hasEntry){
+                                    LoginStatus.setPermissionLevel(1);
+                                    System.out.println("Login Success");
+                                }else{
+                                    System.out.println("Login Failed");
+                                }
+                            }else{
+                                System.out.println("Already logged into an account!");
+                            }
                         }else{
                             dataManager.addEntry((DataClass) entry);
                             System.out.println("added object");
@@ -65,9 +100,14 @@ public class CommandNode {
                     0
             );
         }else{
-            CommandNode commandNode = new CommandNodeInput(abs.get(0).getName(),abs.get(0).getClass().toString());
-            abs.remove(0);
-            this.then(commandNode.consumeVars(dataManager,dataType,abs,checkOrAdd));
+
+            CommandNode commandNode = new CommandNodeInput(
+                    vars.get(0).getName(),
+                    vars.get(0).getClass().toString()
+            );
+            this.then(commandNode.consumeVars(dataManager,dataType,vars,loginOrRegister));
+
+            vars.remove(0);
         }
         return this;
     }

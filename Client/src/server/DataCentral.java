@@ -9,7 +9,6 @@ import server.structs.DataClass;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.lang.Double;
 
 import static commands.Commands.rootCommandNode;
 
@@ -42,8 +41,8 @@ public class DataCentral {
 
     public static void registerDataType(Class<?> classIn) {
         dataManagers.put(classIn, new DataManager(classIn));
-        rootCommandNode.then(CommandNode.dataOperation(dataManagers.get(classIn), classIn, true));
-        rootCommandNode.then(CommandNode.dataOperation(dataManagers.get(classIn), classIn, false));
+        rootCommandNode.then(CommandNode.makeAccountCommands(dataManagers.get(classIn), classIn, true));
+        rootCommandNode.then(CommandNode.makeAccountCommands(dataManagers.get(classIn), classIn, false));
 
         CommandNode editNode = new CommandNodeFork("edit").then
                 (new CommandNodeFork(classIn.getSimpleName()).then
