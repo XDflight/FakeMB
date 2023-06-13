@@ -13,6 +13,7 @@ public class SystemCommand {
                     .then(new CommandNodeFork("save")
                             .end(context -> {
                                 saveDbChanges();
+                                System.out.println("Data saved on disk.");
                             }, 0)
                     )
             );
