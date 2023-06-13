@@ -11,6 +11,7 @@ import server.DataCentral;
 import java.util.Scanner;
 
 import static commands.Commands.parseCommand;
+import static server.DataCentral.dataManagers;
 import static server.DataCentral.registerDataType;
 
 public class Main {
@@ -33,12 +34,16 @@ public class Main {
 //        Debugger.runTest(1);
         initialize();
         Scanner puller = new Scanner(System.in);
-        System.out.println("Loading new world.");
+        System.out.println("sponsored by linus tech tips.");
+        runCommand("register via AccountData superAdmin 2048");
+        runCommand("register via AccountData 1 2");
+        runCommand("filter AccountData userName:superAdmin");
+        runCommand("edit AccountData isSuperAdmin:true");
 
-//        runCommand("registerAccountData 123 123 123");
+//        runCommand("register via PersonaData 2124 female");
+
 //        runCommand("system db save");
-        runCommand("filter AccountData userName:jam");
-        runCommand("edit AccountData userName:jameres");
+        DataCentral.printDataset();
 
 //        System.out.println("SearchGroup.filteredGroup");
 //        System.out.println(SearchGroup.filteredGroup);

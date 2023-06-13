@@ -2,6 +2,8 @@ package server;
 
 import db.Table;
 import server.structs.DataClass;
+import server.structs.annotations.Ref;
+import server.structs.annotations.RefList;
 import util.ReflectHelper;
 
 import java.lang.reflect.Field;
@@ -11,15 +13,29 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static server.DataCentral.registerTable;
+import static server.DataCentral.*;
 
 public class DataManager {
     DataClass templateDataClass;
     final Class dataClass;
 
     Table tableSynced;
-    
+
+    Map<Object,DataClass> objectMap;
     ArrayList<DataClass> objectArray;
+
+    @Override
+    public String toString() {
+        String build= "";
+        System.out.println(templateDataClass.getClass().getSimpleName()+" base\n");
+        for (Map.Entry<Object, DataClass> entry : objectMap.entrySet()) {
+            Object k = entry.getKey();
+            DataClass value = entry.getValue();
+            build += value.toString();
+            build += "\n";
+        }
+        return build;
+    }
 
     public DataManager(DataClass template){
 
@@ -34,29 +50,38 @@ public class DataManager {
         }
     }
     public void loadToTable(){
-        for (int i = 0; i < objectArray.size(); i++) {
-            tableSynced.setRowRaw(i,objectToRow(objectArray.get(i)));
-        }
+        AtomicInteger i= new AtomicInteger();
+        objectMap.forEach((k,v)->{
+            if(i.get()<tableSynced.getRowNum()){
+                tableSynced.setRowRaw(i.getAndIncrement(),objectToRow(v));
+            }else{
+                tableSynced.addRowRaw(i.getAndIncrement(),objectToRow(v));
+            }
+        });
+//        for (int i = 0; i < objectArray.size(); i++) {
+//            tableSynced.setRowRaw(il,objectToRow(objectArray.get(i)));
+//        }
     }
     
     public void loadFromTable(){
-        objectArray=new ArrayList<>();
+        objectMap=new HashMap<>();
         tableSynced.forEach((row)->{
             DataClass rowObject=rowToObject(row);
-            objectArray.add(rowObject);
+            objectMap.put(rowObject.getUUID(),rowObject);
+//            objectArray.add(rowObject);
         });
     }
     public ArrayList<DataClass> filterBy(DataClass filter){
         ArrayList<DataClass> result=new ArrayList<>();
-        for (DataClass data:
-             objectArray) {
-            if(data.filterBy(filter)){
-                result.add(data);
-            }else{
-//                System.out.println("MisMatch");
+        objectMap.forEach((k,v)->{
+            if(v.filterBy(filter)) {
+                result.add(v);
             }
-        }
+        });
         return result;
+    }
+    public DataClass getByUUID(Object UUID){
+        return objectMap.get(UUID);
     }
 
     public DataManager(Class<?> classIn) {
@@ -79,8 +104,19 @@ public class DataManager {
         for (Field field : dataClass.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {
                 String fieldName=field.getName();
+
                 try {
-                    row.put(fieldName,field.get(in));
+                    if(field.isAnnotationPresent(RefList.class)){
+                        String build="";
+                        ArrayList<DataClass> refList= (ArrayList<DataClass>) field.get(in);
+                        for (DataClass data :
+                            refList) {
+                            build+=data.getUUID()+",";
+                        }
+                        row.put(fieldName,build);
+                    }else{
+                        row.put(fieldName,field.get(in));
+                    }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -94,10 +130,36 @@ public class DataManager {
 
         for (Field field : dataClass.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {
+
                 String fieldName=field.getName();
+                Object paramVal=row.get(field.getName());
+
                 if(row.containsKey(fieldName)){
+                    Object fieldVal=row.get(field.getName());
+
+                    if(field.isAnnotationPresent(RefList.class)){
+                        ArrayList<DataClass> refList=new ArrayList<>();
+
+                        DataManager dataset=getDataManager(field.getAnnotation(RefList.class).classType());
+                        if(paramVal instanceof String aString){
+                            String[] refs=aString.split(",");
+                            for (String s:
+                                    refs) {
+                                refList.add(dataset.getByUUID(s));
+                            }
+                        }
+                        fieldVal=refList;
+                    }
+                    if(field.isAnnotationPresent(Ref.class)){
+
+                        DataManager dataset=getDataManager(field.getAnnotation(RefList.class).classType());
+                        if(paramVal instanceof String aString){
+                            fieldVal=dataset.getByUUID(aString);
+                        }
+
+                    }
                     try {
-                        field.set(templateDataClass,row.get(fieldName));
+                        field.set(templateDataClass,fieldVal);
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
@@ -116,12 +178,12 @@ public class DataManager {
 
     public boolean hasEntry(DataClass dataEntry){
         boolean[] has = {false};
-        tableSynced.forEach(
-                (row)->{
-                    if(row==null){
+        objectMap.forEach(
+                (k,v)->{
+                    if(v==null){
                         return;
                     }
-                    if(dataEntry.fullEqual(rowToObject(row))&&!has[0]){
+                    if(dataEntry.fullEqual(v)&&!has[0]){
                         has[0] =true;
                     }
                 }
@@ -130,12 +192,12 @@ public class DataManager {
     }
     public boolean canLogin(DataClass dataEntry){
         boolean[] has = {false};
-        tableSynced.forEach(
-                (row)->{
-                    if(row==null){
+        objectMap.forEach(
+                (k,v)->{
+                    if(v==null){
                         return;
                     }
-                    if(dataEntry.loginEqual(rowToObject(row))&&!has[0]){
+                    if(dataEntry.loginEqual(v)&&!has[0]){
                         has[0] =true;
                     }
                 }
@@ -152,7 +214,7 @@ public class DataManager {
     }
 
     public void addEntry(DataClass data){
-        tableSynced.addRowRaw(objectToRow(data));
+        objectMap.put(data.getUUID(),data);
     }
 
     public DataClass getEntry(int rowIndex){

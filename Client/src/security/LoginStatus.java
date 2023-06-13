@@ -1,6 +1,5 @@
 package security;
 
-import systematic.Entity;
 
 import java.util.UUID;
 

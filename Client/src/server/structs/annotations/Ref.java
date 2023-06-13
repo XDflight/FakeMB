@@ -7,5 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface CSV {
+public @interface Ref {
+    public Class<?> classType() default Object.class;
 }

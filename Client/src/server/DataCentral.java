@@ -6,7 +6,9 @@ import commandNodes.CommandNodeTags;
 import db.Database;
 import db.Table;
 import server.structs.DataClass;
+import server.structs.annotations.ComplexData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,9 +22,6 @@ public class DataCentral {
         dataBaseAtlas.addTable(dataTable);
     }
 
-    public static void printDataBase(){
-
-    }
     public static void saveChanges() {
         for(Class<?> classType:dataManagers.keySet()){
             dataManagers.get(classType).loadToTable();
@@ -31,12 +30,28 @@ public class DataCentral {
     }
     public static void loadDB() {
         dataBaseAtlas.deserialize(dataLocation);
+        ArrayList<DataManager>deferredLoad=new ArrayList<>();
         for(Class<?> classType:dataManagers.keySet()){
-            dataManagers.get(classType).loadFromTable();
+            if(classType.isAnnotationPresent(ComplexData.class)){
+                deferredLoad.add(dataManagers.get(classType));
+            }else{
+                dataManagers.get(classType).loadFromTable();
+            }
+        }
+        for (DataManager dataset:
+             deferredLoad) {
+            dataset.loadFromTable();
         }
     }
 
     public static Map<Class<?>, DataManager> dataManagers = new HashMap<>();
+
+    public static void printDataset(){
+        for (Map.Entry<Class<?>, DataManager> entry:
+             dataManagers.entrySet()) {
+            System.out.println(entry.getValue());
+        }
+    }
 
     public static void registerDataType(Class<?> classIn) {
         dataManagers.put(classIn, new DataManager(classIn));
@@ -68,6 +83,7 @@ public class DataCentral {
                                                         (context -> {
                                                             DataManager manager=dataManagers.get(classIn);
                                                             SearchGroup.filteredGroup=manager.filterBy(manager.rowToObject(context.parameters));
+                                                            System.out.println(SearchGroup.filteredGroup);
                                                         }),
                                                         0
                                                 )
@@ -83,11 +99,15 @@ public class DataCentral {
         registerDataType(classIn);
     }
 
-    public static void pushData(DataClass data) {
+    public static DataManager getDataManager(Class<?> classIn){
+        return dataManagers.get(classIn);
+    }
+
+    public static void addEntry(DataClass data) {
         dataManagers.get(data.getClass()).addEntry(data);
     }
 
-    public static boolean hasData(DataClass data) {
+    public static boolean hasEntry(DataClass data) {
         return dataManagers.get(data.getClass()).hasEntry(data);
     }
 }

@@ -54,7 +54,8 @@ public class Table {
      */
     public Table addField(String fieldName, Class<?> cls) {
         if (!Types.isSupported(cls)) {
-            System.out.println("unsupported");
+            System.out.println("unsupported field type "+cls.toString()+" fall back to String.class");
+            fields.put(fieldName, String.class);
             return this;
         }
         if (fields.containsKey(fieldName))

@@ -1,15 +1,17 @@
 package server.structs;
 
 import security.HashTool;
-import server.structs.annotations.HashElement;
-import server.structs.annotations.LoginRequired;
-import server.structs.annotations.UUID;
+import server.DataManager;
+import server.structs.annotations.*;
 import util.ReflectHelper;
 
 import javax.xml.crypto.Data;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Map;
+
+import static server.DataCentral.getDataManager;
 
 public class DataClass {
     public DataClass makeClone(){
@@ -83,6 +85,20 @@ public class DataClass {
         }
         return false;
     }
+    public Object getUUID(){
+        for (Field field : this.getClass().getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                if(field.isAnnotationPresent(UUID.class)){
+                    try {
+                        return field.get(this);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return null;
+    }
     public boolean filterBy(DataClass filter){
         for (Field field : this.getClass().getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {
@@ -144,10 +160,34 @@ public class DataClass {
     public static Object fromParam(Class<?> classIn,Map<String,Object> row){
         Object dataEntry = ReflectHelper.classInstance(classIn);
         for (Field field : classIn.getDeclaredFields()) {
+            Object paramVal=row.get(field.getName());
+
             if (!Modifier.isStatic(field.getModifiers())) {
                 Object fieldVal=row.get(field.getName());
+
                 if(field.isAnnotationPresent(HashElement.class) && fieldVal instanceof String){
                     fieldVal= HashTool.generate((String) fieldVal,field.getDeclaredAnnotationsByType(HashElement.class)[0].hashType());
+                }
+                if(field.isAnnotationPresent(RefList.class)){
+                    ArrayList<DataClass> refList=new ArrayList<>();
+
+                    DataManager dataset=getDataManager(field.getAnnotation(RefList.class).classType());
+                    if(paramVal instanceof String aString){
+                        String[] refs=aString.split(",");
+                        for (String s:
+                                refs) {
+                            refList.add(dataset.getByUUID(s));
+                        }
+                    }
+                    fieldVal=refList;
+                }
+                if(field.isAnnotationPresent(Ref.class)){
+
+                    DataManager dataset=getDataManager(field.getAnnotation(Ref.class).classType());
+                    if(paramVal instanceof String aString){
+                        fieldVal=dataset.getByUUID(aString);
+                    }
+
                 }
                 try {
                     field.set(dataEntry,fieldVal);
@@ -158,6 +198,7 @@ public class DataClass {
         }
         return dataEntry;
     }
+
     public String safeToString(Object in){
         return in==null? "null" : in.toString();
     }
