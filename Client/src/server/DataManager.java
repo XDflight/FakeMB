@@ -45,24 +45,15 @@ public class DataManager {
             DataClass rowObject=rowToObject(row);
             objectArray.add(rowObject);
         });
-        System.out.println("object array");
-        System.out.println(objectArray);
     }
     public ArrayList<DataClass> filterBy(DataClass filter){
         ArrayList<DataClass> result=new ArrayList<>();
-        System.out.println("Filtered Object Array");
-        System.out.println(objectArray);
-        System.out.println("Filter");
-        System.out.println(filter);
         for (DataClass data:
              objectArray) {
-            System.out.println("Data");
-            System.out.println(data);
             if(data.filterBy(filter)){
-                System.out.println("Add");
                 result.add(data);
             }else{
-                System.out.println("MisMatch");
+//                System.out.println("MisMatch");
             }
         }
         return result;
@@ -75,7 +66,7 @@ public class DataManager {
         registerTable(tableSynced);
         for (Field field : dataClass.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {
-                System.out.println("Add Field");
+//                System.out.println("Add Field");
                 //Fixed
                 tableSynced.addField(field.getName(),field.getType());
             }
@@ -131,6 +122,20 @@ public class DataManager {
                         return;
                     }
                     if(dataEntry.fullEqual(rowToObject(row))&&!has[0]){
+                        has[0] =true;
+                    }
+                }
+        );
+        return has[0];
+    }
+    public boolean canLogin(DataClass dataEntry){
+        boolean[] has = {false};
+        tableSynced.forEach(
+                (row)->{
+                    if(row==null){
+                        return;
+                    }
+                    if(dataEntry.loginEqual(rowToObject(row))&&!has[0]){
                         has[0] =true;
                     }
                 }

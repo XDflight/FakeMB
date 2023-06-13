@@ -103,7 +103,6 @@ public class Database {
                 str += (char) reader.read();
             }
             for (Table table : tableList) {
-                System.out.println("str:"+str);
                 table.deserialize(str, false);
             }
             reader.close();

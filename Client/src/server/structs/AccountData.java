@@ -1,5 +1,6 @@
 package server.structs;
 
+import security.OperatorLevel;
 import server.structs.annotations.HashElement;
 import server.structs.annotations.LoginRequired;
 import server.structs.annotations.RegisterRequired;
@@ -18,4 +19,6 @@ public class AccountData extends DataClass {
     @UUID
     @RegisterRequired
     public String school_id;
+
+//    public OperatorLevel opLevel;
 }

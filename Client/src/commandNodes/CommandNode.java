@@ -77,15 +77,15 @@ public class CommandNode {
     public CommandNode consumeVars(DataManager dataManager, Class<?> dataType, ArrayList<Field> vars, boolean loginOrRegister){
         if(vars.size()<=0){
             this.end(
-                    context -> {
+                    (context) -> {
                         Object entry=fromParam(dataType,context.parameters);
-                        System.out.println(entry);
                         if(loginOrRegister){
-                            boolean hasEntry=dataManager.hasEntry((DataClass) entry);
+                            boolean hasEntry=dataManager.canLogin((DataClass) entry);
                             if(!LoginStatus.hasAccount){
                                 if(hasEntry){
                                     LoginStatus.setPermissionLevel(1);
-                                    System.out.println("Login Success");
+                                    LoginStatus.setHasAccount(true);
+                                    System.out.println("Login Success, Access Granted");
                                 }else{
                                     System.out.println("Login Failed");
                                 }
@@ -105,9 +105,9 @@ public class CommandNode {
                     vars.get(0).getName(),
                     vars.get(0).getClass().toString()
             );
-            this.then(commandNode.consumeVars(dataManager,dataType,vars,loginOrRegister));
 
             vars.remove(0);
+            this.then(commandNode.consumeVars(dataManager,dataType,vars,loginOrRegister));
         }
         return this;
     }

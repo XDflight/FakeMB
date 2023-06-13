@@ -40,8 +40,8 @@ public class Main {
         runCommand("filter AccountData userName:jam");
         runCommand("edit AccountData userName:jameres");
 
-        System.out.println("SearchGroup.filteredGroup");
-        System.out.println(SearchGroup.filteredGroup);
+//        System.out.println("SearchGroup.filteredGroup");
+//        System.out.println(SearchGroup.filteredGroup);
 
         while (true) {
             String userInput = puller.nextLine();

@@ -24,7 +24,7 @@ public class Commands {
                 break;
             }
             //debug message
-            System.out.println(commandNode.toStringTop());
+//            System.out.println(commandNode.toStringTop());
             if (commandNode instanceof CommandNodeTags) {
                 for (int j = 0; j < params.size(); j++) {
                     String[] strSegments = params.get(j).split(":");

@@ -32,7 +32,6 @@ public class DataCentral {
     public static void loadDB() {
         dataBaseAtlas.deserialize(dataLocation);
         for(Class<?> classType:dataManagers.keySet()){
-            System.out.println("load db");
             dataManagers.get(classType).loadFromTable();
         }
     }
@@ -67,7 +66,6 @@ public class DataCentral {
                                         new CommandNodeTags("filterTags")
                                                 .end(
                                                         (context -> {
-                                                            System.out.println("Filtering");
                                                             DataManager manager=dataManagers.get(classIn);
                                                             SearchGroup.filteredGroup=manager.filterBy(manager.rowToObject(context.parameters));
                                                         }),

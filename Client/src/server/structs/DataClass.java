@@ -2,6 +2,7 @@ package server.structs;
 
 import security.HashTool;
 import server.structs.annotations.HashElement;
+import server.structs.annotations.LoginRequired;
 import server.structs.annotations.UUID;
 import util.ReflectHelper;
 
@@ -24,15 +25,45 @@ public class DataClass {
         }
         return (DataClass) clone;
     }
-    public boolean fullEqual(DataClass somebodyElse){
+    public boolean fullEqual(DataClass target){
         for (Field field : this.getClass().getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {
                 try {
-                    if(
-                            !field.get(this).equals(field.get(somebodyElse))
-                    ){
+                    Object varChecked=field.get(this);
+                    Object varTarget=field.get(target);
+                    if(varTarget==null){
                         return false;
-                    };
+                    }
+                    if(varChecked==null){
+                        return false;
+                    }
+                    if(!varTarget.equals(varChecked)){
+                        return false;
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return true;
+    }
+    public boolean loginEqual(DataClass target){
+        for (Field field : this.getClass().getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                try {
+                    if(field.isAnnotationPresent(LoginRequired.class)){
+                        Object varChecked=field.get(this);
+                        Object varTarget=field.get(target);
+                        if(varTarget==null){
+                            return false;
+                        }
+                        if(varChecked==null){
+                            return false;
+                        }
+                        if(!varTarget.equals(varChecked)){
+                            return false;
+                        }
+                    }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -58,20 +89,20 @@ public class DataClass {
                 try {
                     Object varChecked=field.get(this);
                     Object varFilter=field.get(filter);
-                    System.out.println("VarChecked");
-                    System.out.println(varChecked);
-                    System.out.println("VarFilter");
-                    System.out.println(varFilter);
+//                    System.out.println("VarChecked");
+//                    System.out.println(varChecked);
+//                    System.out.println("VarFilter");
+//                    System.out.println(varFilter);
                     if(varFilter==null){
-                        System.out.println("Continued");
+//                        System.out.println("Continued");
                         continue;
                     }
                     if(varChecked==null){
-                        System.out.println("EmptyError");
+//                        System.out.println("EmptyError");
                         return false;
                     }
                     if(!varFilter.equals(varChecked)){
-                        System.out.println("MisMatchError");
+//                        System.out.println("MisMatchError");
                         return false;
                     }
                 } catch (IllegalAccessException e) {
