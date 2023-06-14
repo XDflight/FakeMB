@@ -10,6 +10,9 @@ public class PersonaData extends DataClass {
     public String school_id;
 
     @RegisterRequired
+    public String name;
+
+    @RegisterRequired
     public String gender;
 
     @RegisterRequired

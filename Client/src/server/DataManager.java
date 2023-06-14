@@ -106,17 +106,23 @@ public class DataManager {
                 String fieldName=field.getName();
 
                 try {
-                    if(field.isAnnotationPresent(RefList.class)){
-                        String build="";
-                        ArrayList<DataClass> refList= (ArrayList<DataClass>) field.get(in);
-                        for (DataClass data :
-                            refList) {
-                            build+=data.getUUID()+",";
+                    Object val=field.get(in);
+                    if(val!=null){
+                        if(field.isAnnotationPresent(RefList.class)){
+                            String build="";
+                            ArrayList<DataClass> refList= (ArrayList<DataClass>) field.get(in);
+                            for (DataClass data :
+                                    refList) {
+                                build+=data.getUUID()+",";
+                            }
+                            val=build;
                         }
-                        row.put(fieldName,build);
-                    }else{
-                        row.put(fieldName,field.get(in));
+                        if(field.isAnnotationPresent(Ref.class)){
+                            DataClass ref= (DataClass) field.get(in);
+                            val=ref.getUUID();
+                        }
                     }
+                    row.put(fieldName,val!=null?val:"null");
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -152,7 +158,7 @@ public class DataManager {
                     }
                     if(field.isAnnotationPresent(Ref.class)){
 
-                        DataManager dataset=getDataManager(field.getAnnotation(RefList.class).classType());
+                        DataManager dataset=getDataManager(field.getAnnotation(Ref.class).classType());
                         if(paramVal instanceof String aString){
                             fieldVal=dataset.getByUUID(aString);
                         }
