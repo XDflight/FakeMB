@@ -13,7 +13,4 @@ public class PersonaData extends DataClass {
 
     @RegisterRequired
     public String role;
-
-    String uname;
-    int permissionLevel;
 }

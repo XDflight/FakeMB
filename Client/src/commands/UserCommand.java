@@ -40,16 +40,6 @@ public class UserCommand {
                         LoginStatus.setUname(null);
                         System.out.println("Logged out.");
                     }, 0)
-            ).then(new CommandNodeFork("assign")
-                    .then(new CommandNodeFork("permission")
-                            .then(new CommandNodeInput("uname","String")
-                                    .then(new CommandNodeInput("permission","String")
-                                            .end(context -> {
-
-                                            }, OperatorLevel.ADMIN)
-                                    )
-                            )
-                    )
             );
 
 
