@@ -146,7 +146,7 @@ public class CommandNode {
 
     public CommandNode end(Consumer<Context> in) {
         executable = in;
-        OperatorLevel operatorLevel = OperatorLevel.ADMIN;
+        int operatorLevel = OperatorLevel.ADMIN;
         Predicate<LoginStatus> predicate = (status) -> {
             return LoginStatus.hasPermissionLevel(3);
         };
@@ -156,7 +156,7 @@ public class CommandNode {
 
     public CommandNode end(Consumer<Context> in, int level) {
         executable = in;
-        OperatorLevel operatorLevel = OperatorLevel.ADMIN;
+        int operatorLevel = OperatorLevel.ADMIN;
         Predicate<LoginStatus> predicate = (status) -> {
             return LoginStatus.hasPermissionLevel(level);
         };
