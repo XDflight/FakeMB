@@ -5,42 +5,27 @@ import commandNodes.CommandNodeFork;
 import commandNodes.CommandNodeInput;
 import security.LoginStatus;
 import security.OperatorLevel;
+import server.DataManager;
+import server.SearchGroup;
 
 public class UserCommand {
     static CommandNode userCommandNode = new CommandNodeFork("user")
 
-            .then(new CommandNodeFork("register")
-                    .then(new CommandNodeInput("account", "String")
-                            .then(new CommandNodeInput("password", "String")
-                                    .end(context -> {
-                                                registerAccount(
-                                                        (String) context.get("account"),
-                                                        (String) context.get("password")
-                                                );
-                                            },
-                                            0
-                                    )
-                            )
-                    )
-            ).then(new CommandNodeFork("login")
-                    .then(new CommandNodeFork("status")
-                            .end(context -> {
-                                if (LoginStatus.loggedIn()) {
-                                    System.out.println("[Status] Already Logged in");
-                                    System.out.println("Current User Name: " + LoginStatus.getUname());
-                                } else
-                                    System.out.println("[Status] Haven't logged in.");
-
-                                System.out.println("Current Permission Level: " + LoginStatus.getPermissionLevel());
-                            }, 0)
-                    )
-            ).then(new CommandNodeFork("logout")
+            .then(new CommandNodeFork("logout")
                     .end(context -> {
-                        LoginStatus.setPermissionLevel(0);
-                        LoginStatus.setUname(null);
+                        LoginStatus.setUser(null);
                         System.out.println("Logged out.");
                     }, 0)
-            );
+            ).then(new CommandNodeFork("bind").then(new CommandNodeInput("persona","String").end((context)->{
+                    if(LoginStatus.loggedIn()){
+
+//                        DataManager manager=dataManagers.get(classIn);
+//                        SearchGroup.filteredGroup.forEach((data)->{
+//                            data.editBy(manager.rowToObject(context.parameters));
+//                        });
+//                        LoginStatus.getUser().editBy(rowToObject)
+                    }
+            })));
 
 
     public static void register(CommandNode root) {

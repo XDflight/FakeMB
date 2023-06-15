@@ -6,7 +6,7 @@ import server.structs.annotations.UUID;
 public class PersonaData extends DataClass {
     @RegisterRequired
     @UUID
-    public String school_id;
+    public String student_id;
 
     @RegisterRequired
     public String name;
@@ -15,5 +15,5 @@ public class PersonaData extends DataClass {
     public String gender;
 
     @RegisterRequired
-    public String role;
+    public String userGroup;
 }
