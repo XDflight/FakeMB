@@ -1,5 +1,6 @@
 import commandNodes.*;
 import db.Database;
+import server.SearchGroup;
 import server.structs.AccountData;
 import server.structs.CourseData;
 import server.structs.PersonaData;
