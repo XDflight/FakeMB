@@ -157,6 +157,7 @@ public class DataClass {
         }
         return dataEntry;
     }
+
     public static Object fromParam(Class<?> classIn,Map<String,Object> row){
         Object dataEntry = ReflectHelper.classInstance(classIn);
         for (Field field : classIn.getDeclaredFields()) {

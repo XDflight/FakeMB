@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import static commands.SystemCommand.saveDbChanges;
 import static server.structs.DataClass.fromParam;
 import static util.StringHelper.getTrueTypeString;
 
@@ -77,11 +78,11 @@ public class CommandNode {
                 vars.remove(i);
             }
         }
-        subCommandNode.consumeVars(dataManager, dataType, vars, loginOrRegister);
+        subCommandNode.makeAccountCommands_recursive(dataManager, dataType, vars, loginOrRegister);
         return commandNode;
     }
 
-    public CommandNode consumeVars(DataManager dataManager, Class<?> dataType, ArrayList<Field> vars, boolean loginOrRegister) {
+    public CommandNode makeAccountCommands_recursive(DataManager dataManager, Class<?> dataType, ArrayList<Field> vars, boolean loginOrRegister) {
         if (vars.size() <= 0) {
             this.end(
                     (context) -> {
@@ -90,8 +91,7 @@ public class CommandNode {
                             boolean hasEntry = dataManager.canLogin((DataClass) entry);
                             if (!LoginStatus.loggedIn()) {
                                 if (hasEntry) {
-                                    LoginStatus.setPermissionLevel(1);
-                                    LoginStatus.setUname(((AccountData) entry).userName);
+                                    LoginStatus.setUser((AccountData) entry);
                                     System.out.println("Login Success, Access Granted");
                                 } else {
                                     System.out.println("Login Failed");
@@ -101,6 +101,7 @@ public class CommandNode {
                             }
                         } else {
                             dataManager.addEntry((DataClass) entry);
+                            saveDbChanges();
                             System.out.println("added object");
                         }
                     },
@@ -114,7 +115,7 @@ public class CommandNode {
             );
 
             vars.remove(0);
-            this.then(commandNode.consumeVars(dataManager, dataType, vars, loginOrRegister));
+            this.then(commandNode.makeAccountCommands_recursive(dataManager, dataType, vars, loginOrRegister));
         }
         return this;
     }

@@ -222,7 +222,12 @@ public class DataManager {
     }
 
     public void addEntry(DataClass data){
-        objectMap.put(data.getUUID(),data);
+        Object uuid=data.getUUID();
+        if(objectMap.containsKey(uuid)){
+            System.out.println("A "+templateDataClass.getClass().getSimpleName()+" entry is already registered.");
+        }else{
+            objectMap.put(data.getUUID(),data);
+        }
     }
 
     public DataClass getEntry(int rowIndex){
