@@ -13,7 +13,6 @@ public class AccountData extends DataClass {
     @RegisterRequired
     @LoginRequired
     public String hashPass;
-    public String school_id;
     @Ref(classType = PersonaData.class)
     public PersonaData persona;
     public String isSuperAdmin;

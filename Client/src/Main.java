@@ -2,6 +2,7 @@ import commandNodes.*;
 import db.Database;
 import server.SearchGroup;
 import server.structs.AccountData;
+import server.structs.CourseData;
 import server.structs.PersonaData;
 import tests.Debugger;
 import util.Logger;
@@ -21,15 +22,17 @@ public class Main {
     static Logger LOGGER = new Logger();
 
 
-    public static void initialize(){
+    public static void initialize() {
         DataCentral.registerDataType(AccountData.class);
         DataCentral.registerDataType(PersonaData.class);
-
+        DataCentral.registerDataType(CourseData.class);
         DataCentral.loadDB();
     }
-    public static void runCommand(String command){
+
+    public static void runCommand(String command) {
         parseCommand(StringHelper.breakDownString(command));
     }
+
     public static void main(String[] args) {
 //        Debugger.runTest(1);
         initialize();
@@ -51,6 +54,14 @@ public class Main {
 //        System.out.println(SearchGroup.filteredGroup);
 
         while (true) {
+            String filterGroupTxt = "";
+            if (SearchGroup.filteredGroup != null && SearchGroup.filteredGroup.size() > 0) {
+                filterGroupTxt +=
+                        SearchGroup.filteredGroup.get(0).getClass().getSimpleName()
+                                + ":"
+                                + SearchGroup.filteredGroup.get(0).getUUID();
+            }
+            System.out.print("/" + filterGroupTxt + "> ");
             String userInput = puller.nextLine();
             parseCommand(StringHelper.breakDownString(userInput));
         }
