@@ -3,16 +3,18 @@ package util;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 public class ReflectHelper {
-    public static ArrayList<Field> getFields(Object in){
-        return getFields(in.getClass());
-    }
-    public static ArrayList<Field> getFields(Class<?> in){
+    public static ArrayList<Field> getCertainFields(Class<?> in, Predicate<Field> condition){
+
         ArrayList<Field> fields=new ArrayList<>();
         for(Field field:in.getDeclaredFields()){
-            fields.add(field);
+            if (!Modifier.isStatic(field.getModifiers()) && condition.test(field)) {
+                fields.add(field);
+            }
         }
         return fields;
     }

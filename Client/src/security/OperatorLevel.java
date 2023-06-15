@@ -10,7 +10,7 @@ public class OperatorLevel {
     public static final int ADMIN = 4;
     public static Map<String,Integer> permissionByRole=new HashMap<>();
     static{
-        permissionByRole.put("user",1);
+        permissionByRole.put("user",OperatorLevel.USER);
         permissionByRole.put("student",2);
         permissionByRole.put("teacher",3);
         permissionByRole.put("admin",4);

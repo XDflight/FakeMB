@@ -5,6 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Context {
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
+    }
+
     public Map<String,Object> parameters=new HashMap<>();
     public Context(){
 

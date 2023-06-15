@@ -4,6 +4,7 @@ import security.LoginStatus;
 import security.OperatorLevel;
 import server.DataManager;
 import server.structs.AccountData;
+import server.structs.annotations.HashElement;
 import server.structs.annotations.LoginRequired;
 import server.structs.annotations.RegisterRequired;
 import util.Logger;
@@ -19,6 +20,7 @@ import java.util.function.Predicate;
 
 import static commands.SystemCommand.saveDbChanges;
 import static server.structs.DataClass.fromParam;
+import static util.ObjectBridge.rowToEntry;
 import static util.StringHelper.getTrueTypeString;
 
 public class CommandNode {
@@ -63,21 +65,16 @@ public class CommandNode {
         bridgeCommandNode.then(subCommandNode);
         commandNode.then(bridgeCommandNode);
 
-        ArrayList<Field> vars = ReflectHelper.getFields(dataType);
-        for (int i = vars.size() - 1; i >= 0; i--) {
-            Field var = vars.get(i);
-            boolean addVarToParams = false;
-            if (var.isAnnotationPresent(LoginRequired.class) && loginOrRegister) {
-                addVarToParams = true;
-            }
-            if (var.isAnnotationPresent(RegisterRequired.class) && !loginOrRegister) {
-                addVarToParams = true;
-            }
-            ;
-            if (!addVarToParams) {
-                vars.remove(i);
-            }
-        }
+        ArrayList<Field> vars;
+        vars=loginOrRegister?
+                ReflectHelper.getCertainFields(
+                        dataType,(field)->field.isAnnotationPresent(LoginRequired.class)
+                )
+                :
+                ReflectHelper.getCertainFields(
+                        dataType,(field)->field.isAnnotationPresent(RegisterRequired.class)
+                )
+        ;
         subCommandNode.makeAccountCommands_recursive(dataManager, dataType, vars, loginOrRegister);
         return commandNode;
     }
@@ -86,12 +83,12 @@ public class CommandNode {
         if (vars.size() <= 0) {
             this.end(
                     (context) -> {
-                        Object entry = fromParam(dataType, context.parameters);
+                        DataClass entry = rowToEntry(dataType,context.getParameters());
                         if (loginOrRegister) {
-                            boolean hasEntry = dataManager.canLogin((DataClass) entry);
                             if (!LoginStatus.loggedIn()) {
+                                boolean hasEntry = dataManager.queryLogin(entry);
                                 if (hasEntry) {
-                                    LoginStatus.setUser((AccountData) entry);
+                                    LoginStatus.setUser((AccountData)entry);
                                     System.out.println("Login Success, Access Granted");
                                 } else {
                                     System.out.println("Login Failed");
@@ -100,7 +97,8 @@ public class CommandNode {
                                 System.out.println("Already logged into an account!");
                             }
                         } else {
-                            dataManager.addEntry((DataClass) entry);
+                            dataManager.addEntry(entry);
+                            //User operations were less frequent, so we choose to dump cache directly to storage
                             saveDbChanges();
                             System.out.println("added object");
                         }
@@ -108,10 +106,14 @@ public class CommandNode {
                     0
             );
         } else {
-
+            Field registeredField=vars.get(0);
             CommandNode commandNode = new CommandNodeInput(
-                    vars.get(0).getName(),
-                    vars.get(0).getClass().toString()
+                    registeredField.getName(),
+                    registeredField.getClass().toString(),
+                    registeredField.isAnnotationPresent(HashElement.class)?
+                            registeredField.getAnnotation(HashElement.class).hashType()
+                            :
+                            null
             );
 
             vars.remove(0);
@@ -146,13 +148,7 @@ public class CommandNode {
     }
 
     public CommandNode end(Consumer<Context> in) {
-        executable = in;
-        int operatorLevel = OperatorLevel.ADMIN;
-        Predicate<LoginStatus> predicate = (status) -> {
-            return LoginStatus.hasPermissionLevel(3);
-        };
-        hasPower = predicate;
-        return this;
+        return end(in,3);
     }
 
     public CommandNode end(Consumer<Context> in, int level) {

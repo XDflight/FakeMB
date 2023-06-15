@@ -1,5 +1,6 @@
 import commandNodes.*;
 import db.Database;
+import server.SearchGroup;
 import server.structs.AccountData;
 import server.structs.CourseData;
 import server.structs.PersonaData;
@@ -38,7 +39,6 @@ public class Main {
         runCommand("filter AccountData userName:superAdmin");
         runCommand("edit AccountData isSuperAdmin:true");
 
-
         runCommand("register via AccountData jameres 2048");
         runCommand("register via PersonaData 2124 james male student");
         runCommand("filter AccountData userName:jameres");
@@ -60,7 +60,7 @@ public class Main {
             }
             System.out.print("/" + filterGroupTxt + "> ");
             String userInput = puller.nextLine();
-            parseCommand(StringHelper.breakDownString(userInput));
+            parseCommand( StringHelper.breakDownString(userInput));
         }
     }
 }

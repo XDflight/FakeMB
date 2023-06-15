@@ -1,6 +1,7 @@
 package commands;
 
 import commandNodes.*;
+import security.HashTool;
 
 import java.util.ArrayList;
 
@@ -32,7 +33,15 @@ public class Commands {
                 }
             }
             if (commandNode instanceof CommandNodeInput) {
-                parameter.add(commandNode.name, ((CommandNodeInput) commandNode).type, params.get(0));
+                String dataProtection=((CommandNodeInput) commandNode).hashType;
+                parameter.add(
+                        commandNode.name,
+                        ((CommandNodeInput) commandNode).type,
+                        dataProtection==null?
+                                params.get(0)
+                                :
+                                HashTool.generate(params.get(0),dataProtection)
+                );
             }
             if (commandNode.isEnd()) {
                 commandNode.run(parameter);

@@ -99,7 +99,7 @@ public class DataCentral {
         registerDataType(classIn);
     }
 
-    public static DataManager getDataManager(Class<?> classIn){
+    public static DataManager getDatasetOfClass(Class<?> classIn){
         return dataManagers.get(classIn);
     }
 

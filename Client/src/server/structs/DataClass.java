@@ -5,13 +5,13 @@ import server.DataManager;
 import server.structs.annotations.*;
 import util.ReflectHelper;
 
-import javax.xml.crypto.Data;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
-import static server.DataCentral.getDataManager;
+import static server.DataCentral.getDatasetOfClass;
 
 public class DataClass {
     public DataClass makeClone(){
@@ -172,7 +172,7 @@ public class DataClass {
                 if(field.isAnnotationPresent(RefList.class)){
                     ArrayList<DataClass> refList=new ArrayList<>();
 
-                    DataManager dataset=getDataManager(field.getAnnotation(RefList.class).classType());
+                    DataManager dataset= getDatasetOfClass(field.getAnnotation(RefList.class).classType());
                     if(paramVal instanceof String){
                         String aString = (String) paramVal;
                         String[] refs=aString.split(",");
@@ -185,7 +185,7 @@ public class DataClass {
                 }
                 if(field.isAnnotationPresent(Ref.class)){
 
-                    DataManager dataset=getDataManager(field.getAnnotation(Ref.class).classType());
+                    DataManager dataset= getDatasetOfClass(field.getAnnotation(Ref.class).classType());
                     if(paramVal instanceof String){
                         String aString = (String) paramVal;
                         fieldVal=dataset.getByUUID(aString);
@@ -223,5 +223,105 @@ public class DataClass {
             }
         }
         return append.toString();
+    }
+
+    private Object packVar(Field varType,Object var){
+        if(varType.isAnnotationPresent(RefList.class)){
+
+            if(var instanceof ArrayList<?>){
+                String build="";
+                ArrayList<DataClass> refList= (ArrayList<DataClass>) var;
+                for (DataClass entry:
+                     refList) {
+                    build+=entry.getUUID()+",";
+                }
+                return build;
+            }else{
+                System.out.println("A refList variable can not be a "+var.getClass().getSimpleName()+" instance");
+            }
+        }
+        if(varType.isAnnotationPresent(Ref.class)){
+
+            if(var instanceof DataClass){
+                return ((DataClass) var).getUUID();
+            }else{
+                System.out.println("A ref variable can not be a "+var.getClass().getSimpleName()+" instance");
+            }
+
+        }
+        //Fallback option: String
+        return var.toString();
+    }
+    private Object unPackVar_(Field varType,Object val){
+        if(varType.isAnnotationPresent(RefList.class)){
+
+            if(val instanceof String){
+                ArrayList<DataClass> refList=new ArrayList<>();
+                DataManager dataset= getDatasetOfClass(varType.getAnnotation(RefList.class).classType());
+
+                String aString = (String) val;
+                String[] refs=aString.split(",");
+                for (String ref:
+                        refs) {
+                    refList.add(dataset.getByUUID(ref));
+                }
+                return refList;
+            }else{
+                System.out.println("A refList variable can not be read from a "+val.getClass().getSimpleName()+" instance");
+            }
+        }
+        if(varType.isAnnotationPresent(Ref.class)){
+
+            if(val instanceof String){
+                DataManager dataset= getDatasetOfClass(varType.getAnnotation(Ref.class).classType());
+                String aString = (String) val;
+                return dataset.getByUUID(aString);
+            }else{
+                System.out.println("A ref variable can not be read from a "+val.getClass().getSimpleName()+" instance");
+            }
+
+        }
+        return val;
+    }
+
+    public Map<String,Object> toRow(){
+        Map<String,Object> row=new HashMap<>();
+        for (Field field : this.getClass().getDeclaredFields()) {
+            String fieldName=field.getName();
+
+            if(row.containsKey(fieldName)){
+                try {
+                    Object fieldVar=field.get(this);
+                    row.put(fieldName,packVar(field,fieldVar));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                row.put(fieldName,null);
+            }
+        }
+        return row;
+    }
+
+    public DataClass readRow(Map<String,Object> row){
+        for (Field field : this.getClass().getDeclaredFields()) {
+            String fieldName=field.getName();
+            Object fieldVal=row.get(field.getName());
+
+            if(row.containsKey(fieldName)){
+                try {
+                    field.set(this,unPackVar_(field,fieldVal));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                try {
+                    field.set(this,null);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return this;
     }
 }

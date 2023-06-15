@@ -146,7 +146,7 @@ public class DataManager {
                     if(field.isAnnotationPresent(RefList.class)){
                         ArrayList<DataClass> refList=new ArrayList<>();
 
-                        DataManager dataset=getDataManager(field.getAnnotation(RefList.class).classType());
+                        DataManager dataset= getDatasetOfClass(field.getAnnotation(RefList.class).classType());
                         if(paramVal instanceof String){
                             String aString = (String) paramVal;
                             String[] refs=aString.split(",");
@@ -159,7 +159,7 @@ public class DataManager {
                     }
                     if(field.isAnnotationPresent(Ref.class)){
 
-                        DataManager dataset=getDataManager(field.getAnnotation(Ref.class).classType());
+                        DataManager dataset= getDatasetOfClass(field.getAnnotation(Ref.class).classType());
                         if(paramVal instanceof String){
                             String aString = (String) paramVal;
                             fieldVal=dataset.getByUUID(aString);
@@ -198,19 +198,18 @@ public class DataManager {
         );
         return has[0];
     }
-    public boolean canLogin(DataClass dataEntry){
-        boolean[] has = {false};
-        objectMap.forEach(
-                (k,v)->{
-                    if(v==null){
-                        return;
-                    }
-                    if(dataEntry.loginEqual(v)&&!has[0]){
-                        has[0] =true;
-                    }
-                }
-        );
-        return has[0];
+    public boolean queryLogin(DataClass dataEntry){
+        DataClass targetEntry=objectMap.get(dataEntry.getUUID());
+        if(targetEntry==null){
+            System.out.println("Account is invalid");
+            return false;
+        }
+        if(dataEntry.loginEqual(targetEntry)){
+            return true;
+        }else{
+            System.out.println("Password is incorrect");
+            return false;
+        }
     }
 
     public void setEntry(int rowIndex, DataClass data){
