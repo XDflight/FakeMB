@@ -173,7 +173,8 @@ public class DataClass {
                     ArrayList<DataClass> refList=new ArrayList<>();
 
                     DataManager dataset=getDataManager(field.getAnnotation(RefList.class).classType());
-                    if(paramVal instanceof String aString){
+                    if(paramVal instanceof String){
+                        String aString = (String) paramVal;
                         String[] refs=aString.split(",");
                         for (String s:
                                 refs) {
@@ -185,7 +186,8 @@ public class DataClass {
                 if(field.isAnnotationPresent(Ref.class)){
 
                     DataManager dataset=getDataManager(field.getAnnotation(Ref.class).classType());
-                    if(paramVal instanceof String aString){
+                    if(paramVal instanceof String){
+                        String aString = (String) paramVal;
                         fieldVal=dataset.getByUUID(aString);
                     }
 
