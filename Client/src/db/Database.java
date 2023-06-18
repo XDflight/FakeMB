@@ -1,6 +1,10 @@
 package db;
 
 import javafx.util.Pair;
+import util.ConfigUtil;
+import util.FileUtils;
+import util.MySqlHandler;
+import util.MySqlUtil;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -69,19 +73,22 @@ public class Database {
      */
     public Database serialize(String filePath) {
         try {
-            Path path = Paths.get(filePath);
-            Path parent = path.getParent();
-            if (parent != null && Files.notExists(parent)) {
-                Files.createDirectories(parent);
-            }
 
-            FileOutputStream fop = new FileOutputStream(filePath);
-            OutputStreamWriter writer = new OutputStreamWriter(fop, "GBK");
+            StringBuilder serializedData=new StringBuilder();
+            String dbSystem=ConfigUtil.getConfig("dbSystem");
             for (int i = 0; i < tableList.size(); i++) {
-                writer.append(tableList.get(i).serialize(i));
+                serializedData.append(tableList.get(i).serialize(i));
             }
-            writer.close();
-            fop.close();
+            switch (dbSystem) {
+                case "local" -> {
+                    FileUtils.writeFile(filePath,serializedData.toString());
+                }
+                case "mySql" -> {
+                    MySqlUtil.writeData(serializedData.toString());
+                }
+                default -> System.out.println("Error: no database system defined");
+            }
+            System.out.println("Saved data to "+dbSystem+" database");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -95,23 +102,26 @@ public class Database {
      * @retval:     [Database] "this" is returned.
      */
     public Database deserialize(String filePath) {
+        String dbSystem=ConfigUtil.getConfig("dbSystem");
         try {
-            FileInputStream fip = new FileInputStream(filePath);
-            InputStreamReader reader = new InputStreamReader(fip, "GBK");
-            String str = "";
-            while (reader.ready()) {
-                str += (char) reader.read();
+            String dbString="";
+            switch (dbSystem) {
+                case "local" -> {
+                    dbString = FileUtils.readFile(filePath);
+
+                }
+                case "mySql" -> {
+                    dbString = MySqlUtil.readData();
+                }
+                default -> System.out.println("Error: no database system defined");
             }
             for (Table table : tableList) {
-                table.deserialize(str, false);
+                table.deserialize(dbString, false);
             }
-            reader.close();
-            fip.close();
-        } catch (FileNotFoundException e) {
-            return this;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("Loaded database from "+dbSystem+" system");
         return this;
     }
 

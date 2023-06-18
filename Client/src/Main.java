@@ -1,5 +1,6 @@
 import commandNodes.*;
 import db.Database;
+import server.SearchGroup;
 import server.structs.AccountData;
 import server.structs.CourseData;
 import server.structs.PersonaData;
@@ -34,18 +35,18 @@ public class Main {
         initialize();
         Scanner puller = new Scanner(System.in);
         System.out.println("sponsored by linus tech tips.");
-        runCommand("register via AccountData superAdmin 2048");
-        runCommand("filter AccountData userName:superAdmin");
-        runCommand("edit AccountData isSuperAdmin:true");
-
-
-        runCommand("register via AccountData jameres 2048");
-        runCommand("register via PersonaData 2124 james male student");
-        runCommand("filter AccountData userName:jameres");
-
-        runCommand("edit AccountData persona:2124");
-
-        runCommand("system db save");
+//        runCommand("register via AccountData superAdmin 2048");
+//        runCommand("filter AccountData userName:superAdmin");
+//        runCommand("edit AccountData isSuperAdmin:true");
+//
+//
+//        runCommand("register via AccountData jameres 2048");
+//        runCommand("register via PersonaData 2124 james male student");
+//        runCommand("filter AccountData userName:jameres");
+//
+//        runCommand("edit AccountData persona:2124");
+//
+//        runCommand("system db save");
 
 //        System.out.println("SearchGroup.filteredGroup");
 //        System.out.println(SearchGroup.filteredGroup);

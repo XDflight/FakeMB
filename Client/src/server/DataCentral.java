@@ -7,6 +7,9 @@ import db.Database;
 import db.Table;
 import server.structs.DataClass;
 import server.structs.annotations.ComplexData;
+import util.ConfigUtil;
+import util.FileUtils;
+import util.MySqlUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +25,23 @@ public class DataCentral {
         dataBaseAtlas.addTable(dataTable);
     }
 
+    public static void changeDbSystemTo(String newSystem){
+        String oldSystem= ConfigUtil.getConfig("dbSystem");
+        if(oldSystem.equals(newSystem)){
+            System.out.println("Already in "+newSystem+" db system!");
+            return;
+        }
+        switch (newSystem){
+            case "mySql"->{
+                MySqlUtil.writeData(FileUtils.readFile(dataLocation));
+            }
+            case "local"->{
+                FileUtils.writeFile(dataLocation,MySqlUtil.readData());
+            }
+        }
+        System.out.println("Pushed data from "+oldSystem+" to "+newSystem+" database");
+        ConfigUtil.setConfig("dbSystem",newSystem);
+    }
     public static void saveChanges() {
         for(Class<?> classType:dataManagers.keySet()){
             dataManagers.get(classType).loadToTable();
@@ -70,6 +90,23 @@ public class DataCentral {
                                                 data.editBy(manager.rowToObject(context.parameters));
                                             });
                                         }
+                                }),
+                                0
+                        ))
+                );
+
+        CommandNode removeNode = new CommandNodeFork("remove").then
+                (new CommandNodeFork(classIn.getSimpleName()).then
+                        (new CommandNodeTags("editTags").end(
+                                (context -> {
+                                    if(SearchGroup.filteredGroup==null){
+                                        System.out.println("SearchGroupNullException");
+                                    }else{
+                                        DataManager manager=dataManagers.get(classIn);
+                                        SearchGroup.filteredGroup.forEach((data)->{
+                                            data.editBy(manager.rowToObject(context.parameters));
+                                        });
+                                    }
                                 }),
                                 0
                         ))
