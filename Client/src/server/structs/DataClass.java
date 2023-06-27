@@ -171,9 +171,16 @@ public class DataClass {
 
     private Object packVar(Field varType,Object var){
 
+        if (var==null)var="";
+
         if(varType.getType().getSimpleName().equals("Boolean")){
             return (Boolean) var ? "true" : "false";
         }
+        if(varType.getType().getSimpleName().equals("Integer")){
+            return ((Integer) var).toString();
+        }
+
+
         if(varType.isAnnotationPresent(RefMap.class)){
             if(var instanceof Map<?,?>){
                 StringBuilder build= new StringBuilder();
@@ -198,10 +205,12 @@ public class DataClass {
 
         }
         //Fallback option: String
-        return var.toString();
+        return var==null?"null":var.toString();
     }
 
     private Object unPackVar(Field varType, Object val){
+
+        if (val==null)val="null";
 
         System.out.println("row-column's class is "+val.getClass().getSimpleName());
 
@@ -209,6 +218,9 @@ public class DataClass {
 
             if(varType.getType().getSimpleName().equals("Boolean")){
                 return ((String) val).equalsIgnoreCase("true");
+            }
+            if(varType.getType().getSimpleName().equals("Integer")){
+                return Integer.valueOf((String)val);
             }
 
             if(val instanceof String){
@@ -245,16 +257,16 @@ public class DataClass {
         for (Field field : this.getClass().getDeclaredFields()) {
             String fieldName=field.getName();
 
-            if(row.containsKey(fieldName)){
+//            if(row.containsKey(fieldName)){
                 try {
                     Object fieldVar=field.get(this);
                     row.put(fieldName,packVar(field,fieldVar));
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
-            }else{
-                row.put(fieldName,null);
-            }
+//            }else{
+//                row.put(fieldName,null);
+//            }
         }
         return row;
     }

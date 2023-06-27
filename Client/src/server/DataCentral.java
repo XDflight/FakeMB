@@ -75,7 +75,9 @@ public class DataCentral {
         for (Map.Entry<Class<?>, DataManager> entry:
              dataManagers.entrySet()) {
             System.out.println(entry.getValue());
+            entry.getValue().dumpTable();
         }
+
     }
 
     public static void registerDataType(Class<? extends DataClass> classIn) {

@@ -243,7 +243,7 @@ public class Table {
         String prefix = "table." + tableId;
         for (String strSeg : strSegments) {
             String[] strParts = strSeg.split(":");
-            if (strParts.length < 2) continue;
+//            if (strParts.length < 2) continue;
             String strKey = strParts[0];
             String strValue = strParts[1];
             if (readName && strKey.equals(prefix + ".name")) {
@@ -265,7 +265,7 @@ public class Table {
         }
         for (String strSeg : strSegments) {
             String[] strParts = strSeg.split(":");
-            if (strParts.length < 2) continue;
+//            if (strParts.length < 2) continue;
             String strKey = strParts[0];
             String strValue = strParts[1];
             if (strKey.startsWith(prefix + ".row.")) {
@@ -278,6 +278,7 @@ public class Table {
                 setValue(rowId, fieldName, Types.deserialize(strValue, fieldType));
             }
         }
+
         return this;
     }
 

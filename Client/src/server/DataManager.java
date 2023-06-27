@@ -24,6 +24,12 @@ public class DataManager {
 
     Map<Object,DataClass> objectMap;
 
+    public void dumpTable(){
+        tableSynced.forEach((row)->{
+            System.out.println(row);
+        });
+    }
+
     public DataManager(Class<?> classIn) {
         templateDataClass = (DataClass) ReflectionUtil.classInstance(classIn);
         dataClass = classIn;
@@ -46,13 +52,21 @@ public class DataManager {
                 tableSynced.addRowRaw(i.getAndIncrement(),objectToRow(v));
             }
         });
+        tableSynced.forEach((row)->{
+            System.out.println(row);
+        });
 //        for (int i = 0; i < objectArray.size(); i++) {
 //            tableSynced.setRowRaw(il,objectToRow(objectArray.get(i)));
 //        }
     }
 
     public void loadFromTable(){
+        System.out.println(dataClass.getSimpleName());
         objectMap=new HashMap<>();
+        tableSynced.forEach((row)->{
+            System.out.println("row ");
+            System.out.println(row);
+        });
         tableSynced.forEach((row)->{
             DataClass rowObject=rowToObject(row);
             objectMap.put(rowObject.getUUID(),rowObject);

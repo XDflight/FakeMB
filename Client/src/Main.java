@@ -79,6 +79,9 @@ public class Main {
          *    1. quote mark fix for Tag-like info
          */
 
+
+        AccountData acc=new AccountData();
+
         while (true) {
             String filterGroupTxt = "";
             if (SearchGroup.filteredGroup != null && SearchGroup.filteredGroup.size() > 0) {
