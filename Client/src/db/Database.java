@@ -80,13 +80,14 @@ public class Database {
                 serializedData.append(tableList.get(i).serialize(i));
             }
             switch (dbSystem) {
-                case "local" -> {
+                case "local":
                     FileUtils.writeFile(filePath,serializedData.toString());
-                }
-                case "mySql" -> {
+                    break;
+                case "mySql":
                     MySqlUtil.writeData(serializedData.toString());
-                }
-                default -> System.out.println("Error: no database system defined");
+                    break;
+                default:
+                    System.out.println("Error: no database system defined");
             }
             System.out.println("Saved data to "+dbSystem+" database");
         } catch (Exception e) {
@@ -106,14 +107,14 @@ public class Database {
         try {
             String dbString="";
             switch (dbSystem) {
-                case "local" -> {
+                case "local":
                     dbString = FileUtils.readFile(filePath);
-
-                }
-                case "mySql" -> {
+                    break;
+                case "mySql":
                     dbString = MySqlUtil.readData();
-                }
-                default -> System.out.println("Error: no database system defined");
+                    break;
+                default:
+                    System.out.println("Error: no database system defined");
             }
             for (Table table : tableList) {
                 table.deserialize(dbString, false);

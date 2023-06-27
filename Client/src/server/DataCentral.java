@@ -32,12 +32,12 @@ public class DataCentral {
             return;
         }
         switch (newSystem){
-            case "mySql"->{
+            case "mySql":
                 MySqlUtil.writeData(FileUtils.readFile(dataLocation));
-            }
-            case "local"->{
+                break;
+            case "local":
                 FileUtils.writeFile(dataLocation,MySqlUtil.readData());
-            }
+                break;
         }
         System.out.println("Pushed data from "+oldSystem+" to "+newSystem+" database");
         ConfigUtil.setConfig("dbSystem",newSystem);
