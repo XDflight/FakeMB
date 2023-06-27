@@ -23,7 +23,8 @@ public class UserCommand {
                         LoginStatus.setUser(null);
                         System.out.println("Logged out.");
                     }, 0)
-            ).then(new CommandNodeFork("bind").then(new CommandNodeInput("persona","String").end((context)->{
+            )
+            .then(new CommandNodeFork("bind").then(new CommandNodeInput("persona","String").end((context)->{
                     if(LoginStatus.loggedIn()){
 
                         DataManager manager=dataManagers.get(PersonaData.class);

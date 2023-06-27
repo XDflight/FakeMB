@@ -164,7 +164,7 @@ public class DataManager {
                     Object fieldVal=row.get(field.getName());
 
                     if(field.isAnnotationPresent(RefMap.class)){
-                        ArrayList<DataClass> refList=new ArrayList<>();
+                        Map<String,DataClass> refMap=new HashMap<>();
 
                         DataManager dataset= getDatasetOfClass(field.getAnnotation(RefMap.class).classType());
                         if(paramVal instanceof String){
@@ -172,10 +172,10 @@ public class DataManager {
                             String[] refs=aString.split(",");
                             for (String s:
                                     refs) {
-                                refList.add(dataset.getByUUID(s));
+                                refMap.put(s,dataset.getByUUID(s));
                             }
                         }
-                        fieldVal=refList;
+                        fieldVal=refMap;
                     }
                     if(field.isAnnotationPresent(Ref.class)){
 
