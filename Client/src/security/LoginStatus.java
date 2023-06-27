@@ -9,7 +9,7 @@ import static security.OperatorLevel.permissionByRole;
 
 public class LoginStatus {
     static AccountData account;
-    static boolean neglectPermission=false;
+    static boolean neglectPermission=true;
 
     public static boolean loggedIn() {
         return account!=null;

@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class FileUtils {
+public class FileIOUtil {
     public static void writeFile(String filePath,String text){
         try {
             Path path = Paths.get(filePath);

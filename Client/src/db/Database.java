@@ -2,14 +2,9 @@ package db;
 
 import javafx.util.Pair;
 import util.ConfigUtil;
-import util.FileUtils;
-import util.MySqlHandler;
+import util.FileIOUtil;
 import util.MySqlUtil;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +76,7 @@ public class Database {
             }
             switch (dbSystem) {
                 case "local":
-                    FileUtils.writeFile(filePath,serializedData.toString());
+                    FileIOUtil.writeFile(filePath,serializedData.toString());
                     break;
                 case "mySql":
                     MySqlUtil.writeData(serializedData.toString());
@@ -108,7 +103,7 @@ public class Database {
             String dbString = "";
             switch (dbSystem) {
                 case "local":
-                    dbString = FileUtils.readFile(filePath);
+                    dbString = FileIOUtil.readFile(filePath);
                     break;
                 case "mySql":
                     dbString = MySqlUtil.readData();

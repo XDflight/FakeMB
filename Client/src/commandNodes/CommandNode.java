@@ -7,23 +7,20 @@ import server.structs.AccountData;
 import server.structs.annotations.HashElement;
 import server.structs.annotations.LoginRequired;
 import server.structs.annotations.RegisterRequired;
-import util.Logger;
+import util.LogUtil;
 import server.structs.DataClass;
-import util.ReflectHelper;
+import util.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static commands.SystemCommand.saveDbChanges;
-import static server.structs.DataClass.fromParam;
-import static util.ObjectBridge.rowToEntry;
-import static util.StringHelper.clearSuffix;
-import static util.StringHelper.getTrueTypeString;
+import static util.OTBridgeUtil.rowToEntry;
+import static util.StringUtil.clearSuffix;
 
 public class CommandNode {
     public String name;
@@ -35,7 +32,7 @@ public class CommandNode {
     boolean isParameterStarter = false;
     String nextParameter;
 
-    Logger LOGGER = new Logger();
+    LogUtil LOGGER = new LogUtil();
 
     public boolean hasFork() {
         return hasFork;
@@ -70,11 +67,11 @@ public class CommandNode {
 
         ArrayList<Field> vars;
         vars=loginOrRegister?
-                ReflectHelper.getCertainFields(
+                ReflectionUtil.getCertainFields(
                         dataType,(field)->field.isAnnotationPresent(LoginRequired.class)
                 )
                 :
-                ReflectHelper.getCertainFields(
+                ReflectionUtil.getCertainFields(
                         dataType,(field)->field.isAnnotationPresent(RegisterRequired.class)
                 )
         ;
@@ -89,7 +86,7 @@ public class CommandNode {
                         DataClass entry = rowToEntry(dataType,context.getParameters());
                         if (loginOrRegister) {
                             if (!LoginStatus.loggedIn()) {
-                                DataClass target = dataManager.queryLogin(entry);
+                                DataClass target = dataManager.getLoginEntry(entry);
                                 if (target!=null) {
                                     LoginStatus.setUser((AccountData) target);
                                     System.out.println("Login Success, Access Granted");

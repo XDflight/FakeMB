@@ -4,7 +4,7 @@ import commands.UserCommand;
 
 import java.util.ArrayList;
 
-public class StringHelper {
+public class StringUtil {
     public static String getTrueTypeString(String rawString){
         int keyFrame=indexOf_last(rawString,".");
         return rawString.substring(keyFrame+1);

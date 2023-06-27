@@ -1,8 +1,6 @@
 package tests;
 
 import server.structs.AccountData;
-import server.structs.DataClass;
-import util.ReflectHelper;
 
 public class test1 {
     public static void main(String[] args) {

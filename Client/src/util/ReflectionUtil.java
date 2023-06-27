@@ -7,7 +7,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.function.Predicate;
 
-public class ReflectHelper {
+public class ReflectionUtil {
     public static ArrayList<Field> getCertainFields(Class<?> in, Predicate<Field> condition){
 
         ArrayList<Field> fields=new ArrayList<>();

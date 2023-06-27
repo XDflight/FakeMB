@@ -1,6 +1,5 @@
 package tests;
-import tests.test1;
-import util.ReflectHelper;
+import util.ReflectionUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,7 +12,7 @@ public class Debugger {
     public static void runTest(int testID){
         try {
             String testClassName="tests.test"+testID;
-            Object data =  ReflectHelper.classInstance(testClassName);
+            Object data =  ReflectionUtil.classInstance(testClassName);
             Class<?> testClass=Class.forName(testClassName);
             for(Method method:testClass.getMethods()){
                 if(method.getName().equals("main")){

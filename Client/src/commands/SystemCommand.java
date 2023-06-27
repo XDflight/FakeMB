@@ -3,9 +3,7 @@ package commands;
 import commandNodes.CommandNode;
 import commandNodes.CommandNodeFork;
 import commandNodes.CommandNodeInput;
-import commandNodes.CommandNodeTags;
 import server.DataCentral;
-import server.SearchGroup;
 
 public class SystemCommand {
     static CommandNode commandNode = new CommandNodeFork("system")
@@ -18,7 +16,7 @@ public class SystemCommand {
                     .then(new CommandNodeFork("useSystem")
                             .then(new CommandNodeInput("system","String")
                                     .end(context -> {
-                                        DataCentral.changeDbSystemTo((String)context.get("system"));
+                                        DataCentral.portStorageTo((String)context.get("system"));
                                     },0)
                             )
                     )
@@ -41,6 +39,6 @@ public class SystemCommand {
     }
 
     public static void saveDbChanges() {
-        DataCentral.saveChanges();
+        DataCentral.saveToStorage();
     }
 }

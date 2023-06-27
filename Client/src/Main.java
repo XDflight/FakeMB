@@ -2,9 +2,8 @@ import commandNodes.*;
 import db.Database;
 import server.SearchGroup;
 import server.structs.*;
-import util.Logger;
-import util.StringHelper;
 import server.DataCentral;
+import util.StringUtil;
 
 import java.util.Scanner;
 
@@ -14,7 +13,6 @@ public class Main {
     public static Database db = new Database();
 
     static CommandNode rootCommandNode = new CommandNode();
-    static Logger LOGGER = new Logger();
 
 
     public static void initialize() {
@@ -22,11 +20,11 @@ public class Main {
         DataCentral.registerDataType(PersonaData.class);
         DataCentral.registerDataType(CourseData.class);
         DataCentral.registerDataType(GradeData.class);
-        DataCentral.loadDB();
+        DataCentral.loadFromStorage();
     }
 
     public static void runCommand(String command) {
-        parseCommand(StringHelper.breakDownString(command));
+        parseCommand(StringUtil.breakDownString(command));
     }
 
     public static void main(String[] args) {
@@ -91,7 +89,10 @@ public class Main {
             }
             System.out.print("/" + filterGroupTxt + "> ");
             String userInput = puller.nextLine();
-            parseCommand(StringHelper.breakDownString(userInput));
+            parseCommand(StringUtil.breakDownString(userInput));
         }
+    }
+
+    private static class Logger {
     }
 }

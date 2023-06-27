@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Logger {
+public class LogUtil {
     private static void log2file(String message) {
         PrintWriter out = null;
         SimpleDateFormat dateFormat=new SimpleDateFormat("YYYY-MM-dd");
