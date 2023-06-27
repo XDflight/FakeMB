@@ -113,7 +113,7 @@ public class DataCentral {
                 (new CommandNodeFork(dataSimpleName).then
                         (new CommandNodeTags("editTags").end(
                                 (context -> {
-                                    if(SearchGroup.filteredGroup==null || SearchGroup.filteredGroup.size()==0){
+                                    if(SearchGroup.filteredGroup==null || SearchGroup.filteredGroup.size()<=0){
 
                                         DataManager manager=dataManagers.get(classIn);
                                         manager.removeBy(manager.rowToObject(context.parameters));
@@ -125,7 +125,7 @@ public class DataCentral {
                                                 SearchGroup.filteredGroup.values()) {
                                             data.removeBy(manager.rowToObject(context.parameters));
                                         }
-                                        System.out.println("Dropped from "+SearchGroup.filteredGroup.get(0).getClass().getSimpleName()+" map");
+                                        System.out.println("Dropped from "+SearchGroup.filteredGroup.values().toArray()[0].getClass().getSimpleName()+" map");
                                     }
                                 }),
                                 OperatorLevel.TEACHER

@@ -105,7 +105,7 @@ public class Database {
     public Database deserialize(String filePath) {
         String dbSystem=ConfigUtil.getConfig("dbSystem");
         try {
-            String dbString="";
+            String dbString = "";
             switch (dbSystem) {
                 case "local":
                     dbString = FileUtils.readFile(filePath);

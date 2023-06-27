@@ -46,6 +46,15 @@ public class Main {
 //        runCommand("filter AccountData userName:jameres");
 //
 //        runCommand("edit AccountData persona:2124");
+        runCommand("add Persona id=1");
+        runCommand("add Persona id=2");
+        runCommand("add Persona id=3");
+        runCommand("add Course id=1 students=1,2,3");
+
+        runCommand("dumpData");
+        runCommand("filter Course id=1");
+        runCommand("remove Persona id=1");
+//        runCommand("dumpData");
 //
 //        runCommand("system db save");
 

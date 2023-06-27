@@ -324,25 +324,25 @@ public class DataClass {
         assert refMap != null;
         refMap.putAll(in);
     }
-    public ArrayList<DataClass> removeBy(DataClass filter){
+    public void removeBy(DataClass filter){
         Field refMapField=getAnnotatedField(RefMap.class);
         Map<String,DataClass> refMap= null;
         try {
             refMap = (Map<String, DataClass>) refMapField.get(this);
+
+            Map<String, DataClass> newMap = new HashMap<>();
+            for (Map.Entry<String,DataClass> et: refMap.entrySet()) {
+                if(!et.getValue().filterBy(filter)) {
+                    newMap.put(et.getKey(),et.getValue());
+                }
+            }
+
+            refMapField.set(this,newMap);
+
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        ArrayList<DataClass> result=new ArrayList<>();
-        Map<String, DataClass> finalRefMap = refMap;
-        for (Map.Entry<String,DataClass> et:
-             refMap.entrySet()) {
-            if(et.getValue().filterBy(filter)) {
-                result.add(et.getValue());
-                finalRefMap.remove(et.getKey());
-            }
-        }
 
-        return result;
     }
     public DataClass readRow(Map<String,Object> row){
         for (Field field : this.getClass().getDeclaredFields()) {

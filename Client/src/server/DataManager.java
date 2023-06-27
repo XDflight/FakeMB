@@ -81,18 +81,23 @@ public class DataManager {
         });
         return result;
     }
-    public ArrayList<DataClass> removeBy(DataClass filter){
-        ArrayList<DataClass> result=new ArrayList<>();
+    public void removeBy(DataClass filter){
 
         Set<Map.Entry<Object, DataClass>> entries=objectMap.entrySet();
+
+
+        Map<Object, DataClass> newMap = new HashMap<>();
         for (Map.Entry<Object, DataClass> entry:
                 entries) {
-            if(entry.getValue().filterBy(filter)){
-                objectMap.remove(entry.getKey());
+
+            if(!entry.getValue().filterBy(filter)){
+                System.out.println("Keep: ");
+                System.out.println(entry.getValue());
+                newMap.put((String) entry.getKey(),entry.getValue());
             }
         }
 
-        return result;
+        objectMap = newMap;
     }
     public DataClass getByUUID(Object UUID){
         return objectMap.get(UUID);

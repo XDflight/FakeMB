@@ -11,12 +11,12 @@ import java.util.Map;
 public class CourseData extends DataClass {
     @UUID
     @RegisterRequired
-    public String courseId;
+    public String id;
 
     @RegisterRequired
-    public String courseName;
+    public String name;
 
-    public String courseInfo;
+    public String info;
 
     @RefMap(classType = PersonaData.class)
     public Map<String,PersonaData> students;
