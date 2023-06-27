@@ -16,5 +16,5 @@ public class AccountData extends DataClass {
 
     @Ref(classType = PersonaData.class)
     public PersonaData persona;
-    public String isSuperAdmin;
+    public Boolean isSuperAdmin;
 }

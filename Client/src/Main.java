@@ -20,7 +20,7 @@ public class Main {
 
 
     public static void initialize() {
-        DataCentral.registerDataType(AccountData.class);
+        DataCentral.registerDataType(AccountData.class,true);
         DataCentral.registerDataType(PersonaData.class);
         DataCentral.registerDataType(CourseData.class);
         DataCentral.loadDB();

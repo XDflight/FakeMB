@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static commands.Commands.rootCommandNode;
+import static util.StringHelper.clearSuffix;
 
 public class DataCentral {
     public static String dataLocation = "./data/svDb.txt";
@@ -73,22 +74,32 @@ public class DataCentral {
         }
     }
 
-    public static void registerDataType(Class<?> classIn) {
+    public static void registerDataType(Class<? extends DataClass> classIn) {
+        registerDataType(classIn,false);
+    }
+    public static void registerDataType(Class<? extends DataClass> classIn,boolean asPortal) {
         dataManagers.put(classIn, new DataManager(classIn));
-        rootCommandNode.then(CommandNode.makeAccountCommands(dataManagers.get(classIn), classIn, true));
-        rootCommandNode.then(CommandNode.makeAccountCommands(dataManagers.get(classIn), classIn, false));
+
+        if(asPortal) {
+            rootCommandNode.then(CommandNode.makeAccountCommands(dataManagers.get(classIn), classIn, true));
+            rootCommandNode.then(CommandNode.makeAccountCommands(dataManagers.get(classIn), classIn, false));
+        }
+
+        String dataSimpleName=clearSuffix(classIn.getSimpleName(),"Data");
 
         CommandNode editNode = new CommandNodeFork("edit").then
-                (new CommandNodeFork(classIn.getSimpleName()).then
+                (new CommandNodeFork(dataSimpleName).then
                         (new CommandNodeTags("editTags").end(
                                 (context -> {
                                         if(SearchGroup.filteredGroup==null){
                                             System.out.println("SearchGroupNullException");
                                         }else{
                                             DataManager manager=dataManagers.get(classIn);
-                                            SearchGroup.filteredGroup.forEach((data)->{
+
+                                            for (DataClass data:
+                                                    SearchGroup.filteredGroup.values()) {
                                                 data.editBy(manager.rowToObject(context.parameters));
-                                            });
+                                            }
                                         }
                                 }),
                                 0
@@ -96,24 +107,56 @@ public class DataCentral {
                 );
 
         CommandNode removeNode = new CommandNodeFork("remove").then
-                (new CommandNodeFork(classIn.getSimpleName()).then
+                (new CommandNodeFork(dataSimpleName).then
                         (new CommandNodeTags("editTags").end(
                                 (context -> {
-                                    if(SearchGroup.filteredGroup==null){
-                                        System.out.println("SearchGroupNullException");
-                                    }else{
+                                    if(SearchGroup.filteredGroup==null || SearchGroup.filteredGroup.size()==0){
+
                                         DataManager manager=dataManagers.get(classIn);
-                                        SearchGroup.filteredGroup.forEach((data)->{
-                                            data.editBy(manager.rowToObject(context.parameters));
-                                        });
+                                        manager.removeBy(manager.rowToObject(context.parameters));
+                                        System.out.println("Removed in global db");
+                                    }else{
+
+                                        DataManager manager=dataManagers.get(classIn);
+                                        for (DataClass data:
+                                                SearchGroup.filteredGroup.values()) {
+                                            data.removeBy(manager.rowToObject(context.parameters));
+                                        }
+                                        System.out.println("Dropped from "+SearchGroup.filteredGroup.get(0).getClass().getSimpleName()+" map");
                                     }
                                 }),
                                 0
                         ))
                 );
+
+
+        CommandNode addNode = new CommandNodeFork("add").then
+                (new CommandNodeFork(dataSimpleName).then
+                        (new CommandNodeTags("editTags").end(
+                                (context -> {
+                                    if(SearchGroup.filteredGroup==null || SearchGroup.filteredGroup.size()==0){
+
+
+                                        DataManager manager=dataManagers.get(classIn);
+                                        manager.addEntry(manager.rowToObject(context.parameters));
+                                        System.out.println("Added in global db");
+                                    }else{
+
+                                        DataManager manager=dataManagers.get(classIn);
+                                        for (DataClass data:
+                                        SearchGroup.filteredGroup.values()) {
+                                            data.unionMap(manager.filterBy(manager.rowToObject(context.parameters)));
+                                        }
+                                        System.out.println("Added to "+SearchGroup.filteredGroup.get(0).getClass().getSimpleName()+" map");
+                                    }
+                                }),
+                                0
+                        ))
+                );
+
         CommandNode filterNode = new CommandNodeFork("filter")
                 .then(
-                        new CommandNodeFork(classIn.getSimpleName())
+                        new CommandNodeFork(dataSimpleName)
                                 .then(
                                         new CommandNodeTags("filterTags")
                                                 .end(
@@ -128,11 +171,11 @@ public class DataCentral {
 
                 );
 
-        rootCommandNode.then(editNode).then(filterNode);
+        rootCommandNode.then(editNode).then(filterNode).then(removeNode).then(addNode);
     }
 
     public static void registerDataType(DataClass classObjectIn) {
-        Class<?> classIn = classObjectIn.getClass();
+        Class<? extends DataClass> classIn = classObjectIn.getClass();
         registerDataType(classIn);
     }
 

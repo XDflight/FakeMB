@@ -5,6 +5,7 @@ import server.DataManager;
 import server.structs.annotations.*;
 import util.ReflectHelper;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -73,18 +74,11 @@ public class DataClass {
         }
         return true;
     }
+
     public boolean equalByUUID(Object UUID) throws Exception{
-        for (Field field : this.getClass().getDeclaredFields()) {
-            if (!Modifier.isStatic(field.getModifiers())) {
-                if(field.isAnnotationPresent(UUID.class)){
-                    if(field.get(this).equals(UUID)){
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return this.getUUID().equals(UUID);
     }
+
     public Object getUUID(){
         for (Field field : this.getClass().getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {
@@ -105,10 +99,6 @@ public class DataClass {
                 try {
                     Object varChecked=field.get(this);
                     Object varFilter=field.get(filter);
-//                    System.out.println("VarChecked");
-//                    System.out.println(varChecked);
-//                    System.out.println("VarFilter");
-//                    System.out.println(varFilter);
                     if(varFilter==null){
 //                        System.out.println("Continued");
                         continue;
@@ -169,10 +159,10 @@ public class DataClass {
                 if(field.isAnnotationPresent(HashElement.class) && fieldVal instanceof String){
                     fieldVal= HashTool.generate((String) fieldVal,field.getDeclaredAnnotationsByType(HashElement.class)[0].hashType());
                 }
-                if(field.isAnnotationPresent(RefList.class)){
+                if(field.isAnnotationPresent(RefMap.class)){
                     ArrayList<DataClass> refList=new ArrayList<>();
 
-                    DataManager dataset= getDatasetOfClass(field.getAnnotation(RefList.class).classType());
+                    DataManager dataset= getDatasetOfClass(field.getAnnotation(RefMap.class).classType());
                     if(paramVal instanceof String){
                         String aString = (String) paramVal;
                         String[] refs=aString.split(",");
@@ -226,18 +216,22 @@ public class DataClass {
     }
 
     private Object packVar(Field varType,Object var){
-        if(varType.isAnnotationPresent(RefList.class)){
 
-            if(var instanceof ArrayList<?>){
-                String build="";
-                ArrayList<DataClass> refList= (ArrayList<DataClass>) var;
-                for (DataClass entry:
-                     refList) {
-                    build+=entry.getUUID()+",";
+        if(varType.getType().getSimpleName().equals("Boolean")){
+            return (Boolean) var ? "true" : "false";
+        }
+        if(varType.isAnnotationPresent(RefMap.class)){
+            if(var instanceof Map<?,?>){
+                StringBuilder build= new StringBuilder();
+                Map<String,DataClass> refList= (Map<String, DataClass>) var;
+                for (Map.Entry<String,DataClass> entry:
+                     refList.entrySet()) {
+                    build.append(entry.getKey()).append(",");
+//                    build+=entry.getValue().getUUID()+",";
                 }
-                return build;
+                return build.toString();
             }else{
-                System.out.println("A refList variable can not be a "+var.getClass().getSimpleName()+" instance");
+                System.out.println("A refMap variable can not be a "+var.getClass().getSimpleName()+" instance");
             }
         }
         if(varType.isAnnotationPresent(Ref.class)){
@@ -252,22 +246,30 @@ public class DataClass {
         //Fallback option: String
         return var.toString();
     }
+
     private Object unPackVar_(Field varType,Object val){
-        if(varType.isAnnotationPresent(RefList.class)){
+
+        System.out.println("row-column's class is "+val.getClass().getSimpleName());
+
+        if(varType.isAnnotationPresent(RefMap.class)){
+
+            if(varType.getType().getSimpleName().equals("Boolean")){
+                return ((String) val).equalsIgnoreCase("true");
+            }
 
             if(val instanceof String){
-                ArrayList<DataClass> refList=new ArrayList<>();
-                DataManager dataset= getDatasetOfClass(varType.getAnnotation(RefList.class).classType());
+                Map<String,DataClass> refMap=new HashMap<>();
+                DataManager dataset= getDatasetOfClass(varType.getAnnotation(RefMap.class).classType());
 
                 String aString = (String) val;
                 String[] refs=aString.split(",");
                 for (String ref:
                         refs) {
-                    refList.add(dataset.getByUUID(ref));
+                    refMap.put(ref,dataset.getByUUID(ref));
                 }
-                return refList;
+                return refMap;
             }else{
-                System.out.println("A refList variable can not be read from a "+val.getClass().getSimpleName()+" instance");
+                System.out.println("A refMap variable can not be read from a "+val.getClass().getSimpleName()+" instance");
             }
         }
         if(varType.isAnnotationPresent(Ref.class)){
@@ -302,7 +304,46 @@ public class DataClass {
         }
         return row;
     }
+    public Field getAnnotatedField(Class<? extends Annotation> annotationClass){
+        for (Field field : this.getClass().getDeclaredFields()) {
+            if(field.isAnnotationPresent(annotationClass)){
+                return field;
+            }
+        }
+        return null;
+    }
+    public void unionMap(Map<String,DataClass> in){
+        Field refMapField=getAnnotatedField(RefMap.class);
+        Map<String,DataClass> refMap= null;
+        try {
+            refMap = (Map<String, DataClass>) refMapField.get(this);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
 
+        assert refMap != null;
+        refMap.putAll(in);
+    }
+    public ArrayList<DataClass> removeBy(DataClass filter){
+        Field refMapField=getAnnotatedField(RefMap.class);
+        Map<String,DataClass> refMap= null;
+        try {
+            refMap = (Map<String, DataClass>) refMapField.get(this);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        ArrayList<DataClass> result=new ArrayList<>();
+        Map<String, DataClass> finalRefMap = refMap;
+        for (Map.Entry<String,DataClass> et:
+             refMap.entrySet()) {
+            if(et.getValue().filterBy(filter)) {
+                result.add(et.getValue());
+                finalRefMap.remove(et.getKey());
+            }
+        }
+
+        return result;
+    }
     public DataClass readRow(Map<String,Object> row){
         for (Field field : this.getClass().getDeclaredFields()) {
             String fieldName=field.getName();

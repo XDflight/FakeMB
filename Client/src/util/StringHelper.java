@@ -17,6 +17,10 @@ public class StringHelper {
         }
         return -1;
     }
+    public static String clearSuffix(String in,String suffix){
+        int keyFrame=indexOf_last(in,suffix);
+        return in.substring(0,keyFrame);
+    }
     public static ArrayList<String> breakDownString(String rawString){
 
         ArrayList<String>atoms=new ArrayList<>();

@@ -17,16 +17,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static commands.SystemCommand.saveDbChanges;
 import static server.structs.DataClass.fromParam;
 import static util.ObjectBridge.rowToEntry;
+import static util.StringHelper.clearSuffix;
 import static util.StringHelper.getTrueTypeString;
 
 public class CommandNode {
     public String name;
     private Consumer<Context> executable;
-    private Predicate<LoginStatus> hasPower;
+    private Supplier<Boolean> hasPower;
 
     Map<String, CommandNode> children = new HashMap<>();
     boolean hasFork = false;
@@ -51,7 +53,7 @@ public class CommandNode {
         return children.toString();
     }
 
-    public static CommandNode makeAccountCommands(DataManager dataManager, Class<?> dataType, boolean loginOrRegister) {
+    public static CommandNode makeAccountCommands(DataManager dataManager, Class<? extends DataClass> dataType, boolean loginOrRegister) {
         String prefix = loginOrRegister ? "login" : "register";
         CommandNode commandNode = new CommandNodeFork(
                 prefix
@@ -60,8 +62,9 @@ public class CommandNode {
                 "via"
         );
         CommandNode subCommandNode = new CommandNodeFork(
-                getTrueTypeString(dataType.getTypeName())
+                clearSuffix(dataType.getSimpleName(),"Data")
         );
+
         bridgeCommandNode.then(subCommandNode);
         commandNode.then(bridgeCommandNode);
 
@@ -79,7 +82,7 @@ public class CommandNode {
         return commandNode;
     }
 
-    public CommandNode makeAccountCommands_recursive(DataManager dataManager, Class<?> dataType, ArrayList<Field> vars, boolean loginOrRegister) {
+    public CommandNode makeAccountCommands_recursive(DataManager dataManager, Class<? extends DataClass> dataType, ArrayList<Field> vars, boolean loginOrRegister) {
         if (vars.size() <= 0) {
             this.end(
                     (context) -> {
@@ -154,14 +157,14 @@ public class CommandNode {
     public CommandNode end(Consumer<Context> in, int level) {
         executable = in;
         int operatorLevel = OperatorLevel.ADMIN;
-        Predicate<LoginStatus> predicate = (status) -> {
+        Supplier<Boolean> predicate = () -> {
             return LoginStatus.hasPermissionLevel(level);
         };
         hasPower = predicate;
         return this;
     }
 
-    public CommandNode end(Consumer<Context> in, Predicate<LoginStatus> predicate) {
+    public CommandNode end(Consumer<Context> in, Supplier<Boolean> predicate) {
         executable = in;
         hasPower = predicate;
         return this;
@@ -180,10 +183,10 @@ public class CommandNode {
     }
 
     public void run(Context params) {
-        if (hasPower.test(new LoginStatus())) {
+        if (hasPower.get()) {
             executable.accept(params);
         } else {
-            LOGGER.warn("no permission");
+            LOGGER.warn("no permission / not logged in");
         }
     }
 }

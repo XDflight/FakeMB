@@ -28,19 +28,32 @@ public class Commands {
 //            System.out.println(commandNode.toStringTop());
             if (commandNode instanceof CommandNodeTags) {
                 for (int j = 0; j < params.size(); j++) {
-                    String[] strSegments = params.get(j).split(":");
-                    parameter.add(strSegments[0],"String",strSegments[1]);
+                    String[] strSegments = params.get(j).split("=");
+                    String[] strSegments2 = params.get(j).split(":");
+                    if(Math.max(strSegments2.length,strSegments.length)<2){
+                        System.out.println("wrong format for tag No:"+(j+1));
+                        continue;
+                    }else{
+                        if(strSegments2.length> strSegments.length){
+                            parameter.add(strSegments2[0],"String",strSegments2[1]);
+                        }else if(strSegments2.length < strSegments.length){
+                            parameter.add(strSegments[0],"String",strSegments[1]);
+                        }else{
+                            parameter.add(strSegments[0],"String",strSegments[1]);
+                        }
+                    }
+
                 }
             }
             if (commandNode instanceof CommandNodeInput) {
-                String dataProtection=((CommandNodeInput) commandNode).hashType;
+                String dataProtectionMethod=((CommandNodeInput) commandNode).hashType;
                 parameter.add(
                         commandNode.name,
                         ((CommandNodeInput) commandNode).type,
-                        dataProtection==null?
+                        dataProtectionMethod==null?
                                 params.get(0)
                                 :
-                                HashTool.generate(params.get(0),dataProtection)
+                                HashTool.generate(params.get(0),dataProtectionMethod)
                 );
             }
             if (commandNode.isEnd()) {
