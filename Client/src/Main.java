@@ -54,10 +54,18 @@ public class Main {
 
         /*
          * <Command List>
-         * - register via TableName *Ordered Data*
-         * - login via AccountData username password
-         * - filter TableName DataType:Data
-         * - edit TableName DataType:Data
+         * - register via TableName(omit "Data") *Ordered Data*
+         * - login via Account username password
+         * - filter TableName(omit "Data") DataType:Data
+         * - edit TableName(omit "Data") DataType:Data
+         * - system db save
+         * - add TableName(omit "Data") *Tagged Data*
+         * - dumpData
+         * - remove TableName(omit "Data") DataType:Data
+         * - user bind student_id //Bugged
+         *
+         * //TODO
+         *    1. quote mark fix for Tag-like info
          */
 
         while (true) {

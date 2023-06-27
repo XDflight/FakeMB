@@ -5,6 +5,7 @@ import commandNodes.CommandNodeFork;
 import commandNodes.CommandNodeTags;
 import db.Database;
 import db.Table;
+import security.OperatorLevel;
 import server.structs.DataClass;
 import server.structs.annotations.ComplexData;
 import util.ConfigUtil;
@@ -99,10 +100,12 @@ public class DataCentral {
                                             for (DataClass data:
                                                     SearchGroup.filteredGroup.values()) {
                                                 data.editBy(manager.rowToObject(context.parameters));
+
                                             }
+                                            System.out.println(SearchGroup.filteredGroup);
                                         }
                                 }),
-                                0
+                                OperatorLevel.TEACHER
                         ))
                 );
 
@@ -125,7 +128,7 @@ public class DataCentral {
                                         System.out.println("Dropped from "+SearchGroup.filteredGroup.get(0).getClass().getSimpleName()+" map");
                                     }
                                 }),
-                                0
+                                OperatorLevel.TEACHER
                         ))
                 );
 
@@ -150,7 +153,7 @@ public class DataCentral {
                                         System.out.println("Added to "+SearchGroup.filteredGroup.get(0).getClass().getSimpleName()+" map");
                                     }
                                 }),
-                                0
+                                OperatorLevel.TEACHER
                         ))
                 );
 
@@ -165,13 +168,21 @@ public class DataCentral {
                                                             SearchGroup.filteredGroup=manager.filterBy(manager.rowToObject(context.parameters));
                                                             System.out.println(SearchGroup.filteredGroup);
                                                         }),
-                                                        0
+                                                        OperatorLevel.STUDENT
                                                 )
                                 )
 
                 );
 
-        rootCommandNode.then(editNode).then(filterNode).then(removeNode).then(addNode);
+        CommandNode unfilterNode = new CommandNodeFork("unfilter")
+                .end(
+                        (context->{
+                            SearchGroup.filteredGroup = null;
+                        }),
+                        OperatorLevel.STUDENT
+                );
+
+        rootCommandNode.then(editNode).then(filterNode).then(removeNode).then(addNode).then(unfilterNode);
     }
 
     public static void registerDataType(DataClass classObjectIn) {

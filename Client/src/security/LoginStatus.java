@@ -17,6 +17,7 @@ public class LoginStatus {
     }
 
     public static int getPermissionLevel() {
+        if (account.persona == null) return 1;
         return permissionByRole(account.persona.userGroup);
     }
 
@@ -38,7 +39,7 @@ public class LoginStatus {
         if(!loggedIn()){
             return lvl<=0;
         }
-        if(account.isSuperAdmin){
+        if(account.isSuperAdmin != null && account.isSuperAdmin){
             return true;
         }
         return getPermissionLevel() >= lvl;
