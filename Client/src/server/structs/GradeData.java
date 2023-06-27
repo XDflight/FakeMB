@@ -13,7 +13,7 @@ public class GradeData extends DataClass {
     String id;
 
     @RegisterRequired
-    Integer grade;
+    String grade;
 
     @Ref(classType = CourseData.class)
     @RegisterRequired

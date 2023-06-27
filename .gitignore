@@ -27,4 +27,4 @@ replay_pid*
 /out/
 /.github/
 /data/
-/log*.txt/
+log*.txt
