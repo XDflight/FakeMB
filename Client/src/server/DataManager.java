@@ -115,6 +115,8 @@ public class DataManager {
     public Map<String,Object> objectToRow(DataClass in){
         Map<String,Object> row=new HashMap<>();
 
+        System.out.println(in);
+
         for (Field field : dataClass.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {
                 String fieldName=field.getName();
@@ -126,14 +128,22 @@ public class DataManager {
                         val = (Boolean) (val==null?false:val) ? "true" : "false";
                     }
 
+
                     if(val!=null){
                         if(field.isAnnotationPresent(RefMap.class)){
                             String build="";
+
                             Map<String,DataClass> refMap= (Map<String, DataClass>) field.get(in);
+
+                            if(refMap.size()<=0)continue;
                             for (DataClass data :
                                     refMap.values()) {
+
+                                if(data==null)continue;
+
                                 build+=data.getUUID()+",";
                             }
+
                             val=build;
                         }
                         if(field.isAnnotationPresent(Ref.class)){
@@ -164,7 +174,7 @@ public class DataManager {
                     Object fieldVal=row.get(field.getName());
 
                     if(field.isAnnotationPresent(RefMap.class)){
-                        ArrayList<DataClass> refList=new ArrayList<>();
+                        Map<String,DataClass> refList=new HashMap<>();
 
                         DataManager dataset= getDatasetOfClass(field.getAnnotation(RefMap.class).classType());
                         if(paramVal instanceof String){
@@ -172,7 +182,7 @@ public class DataManager {
                             String[] refs=aString.split(",");
                             for (String s:
                                     refs) {
-                                refList.add(dataset.getByUUID(s));
+                                refList.put(s,dataset.getByUUID(s));
                             }
                         }
                         fieldVal=refList;
