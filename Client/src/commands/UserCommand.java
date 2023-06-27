@@ -5,12 +5,14 @@ import commandNodes.CommandNodeFork;
 import commandNodes.CommandNodeInput;
 import security.LoginStatus;
 import security.OperatorLevel;
+import server.DataCentral;
 import server.DataManager;
 import server.SearchGroup;
 import server.structs.PersonaData;
 
 import java.awt.event.PaintEvent;
 
+import static commands.SystemCommand.saveDbChanges;
 import static server.DataCentral.dataManagers;
 
 public class UserCommand {
@@ -25,7 +27,7 @@ public class UserCommand {
                     if(LoginStatus.loggedIn()){
                         DataManager manager=dataManagers.get(PersonaData.class);
                         LoginStatus.getUser().persona= (PersonaData) manager.getByUUID(context.get("persona"));
-
+                        saveDbChanges();
 //                        DataManager manager=dataManagers.get(classIn);
 //                        SearchGroup.filteredGroup.forEach((data)->{
 //                            data.editBy(manager.rowToObject(context.parameters));
