@@ -54,7 +54,11 @@ public class Main {
         runCommand("dumpData");
         runCommand("filter Course id=1");
         runCommand("remove Persona id=1");
-//        runCommand("dumpData");
+        runCommand("dumpData");
+        runCommand("remove Persona id=2");
+        runCommand("dumpData");
+        runCommand("remove Persona id=3");
+        runCommand("dumpData");
 //
 //        runCommand("system db save");
 
