@@ -36,7 +36,7 @@ public class LoginStatus {
             return true;
         }
         if(!loggedIn()){
-            return false;
+            return lvl<=0;
         }
         if(account.isSuperAdmin){
             return true;

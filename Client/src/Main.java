@@ -3,6 +3,7 @@ import db.Database;
 import server.SearchGroup;
 import server.structs.AccountData;
 import server.structs.CourseData;
+import server.structs.DataClass;
 import server.structs.PersonaData;
 import util.Logger;
 import util.StringHelper;
@@ -63,9 +64,9 @@ public class Main {
             String filterGroupTxt = "";
             if (SearchGroup.filteredGroup != null && SearchGroup.filteredGroup.size() > 0) {
                 filterGroupTxt +=
-                        SearchGroup.filteredGroup.get(0).getClass().getSimpleName()
+                        SearchGroup.filteredGroup.values().toArray()[0].getClass().getSimpleName()
                                 + ":"
-                                + SearchGroup.filteredGroup.get(0).getUUID();
+                                + ((DataClass)SearchGroup.filteredGroup.values().toArray()[0]).getUUID();
             }
             System.out.print("/" + filterGroupTxt + "> ");
             String userInput = puller.nextLine();
