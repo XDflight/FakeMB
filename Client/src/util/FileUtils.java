@@ -11,10 +11,7 @@ public class FileUtils {
             Path path = Paths.get(filePath);
             Path parent = path.getParent();
             if (parent != null && Files.notExists(parent)) {
-
                 Files.createDirectories(parent);
-
-
             }
             FileOutputStream fop = new FileOutputStream(filePath);
             OutputStreamWriter writer = new OutputStreamWriter(fop, "GBK");
@@ -35,6 +32,8 @@ public class FileUtils {
             }
             reader.close();
             fip.close();
+        } catch (FileNotFoundException e) {
+            file.append("");
         } catch (IOException e) {
             e.printStackTrace();
         }

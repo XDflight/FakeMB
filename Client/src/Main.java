@@ -51,6 +51,14 @@ public class Main {
 //        System.out.println("SearchGroup.filteredGroup");
 //        System.out.println(SearchGroup.filteredGroup);
 
+        /*
+         * <Command List>
+         * - register via TableName *Ordered Data*
+         * - login via AccountData username password
+         * - filter TableName DataType:Data
+         * - edit TableName DataType:Data
+         */
+
         while (true) {
             String filterGroupTxt = "";
             if (SearchGroup.filteredGroup != null && SearchGroup.filteredGroup.size() > 0) {

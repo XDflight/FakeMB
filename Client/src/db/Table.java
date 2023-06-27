@@ -243,6 +243,7 @@ public class Table {
         String prefix = "table." + tableId;
         for (String strSeg : strSegments) {
             String[] strParts = strSeg.split(":");
+            if (strParts.length < 2) continue;
             String strKey = strParts[0];
             String strValue = strParts[1];
             if (readName && strKey.equals(prefix + ".name")) {
@@ -305,6 +306,7 @@ public class Table {
         String[] strSegments = str.split(";");
         for (String strSeg : strSegments) {
             String[] strParts = strSeg.split(":");
+            if (strParts.length < 2) continue;
             String strKey = strParts[0];
             String strValue = strParts[1];
             if (strKey.matches("table\\.[0-9]+\\.name")) {
