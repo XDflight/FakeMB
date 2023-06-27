@@ -6,12 +6,12 @@ import server.structs.annotations.Ref;
 import server.structs.annotations.RefMap;
 import util.ReflectHelper;
 
-import javax.xml.crypto.Data;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static server.DataCentral.*;
@@ -83,12 +83,15 @@ public class DataManager {
     }
     public ArrayList<DataClass> removeBy(DataClass filter){
         ArrayList<DataClass> result=new ArrayList<>();
-        objectMap.forEach((k,v)->{
-            if(v.filterBy(filter)) {
-                result.add(v);
-                objectMap.remove(k);
+
+        Set<Map.Entry<Object, DataClass>> entries=objectMap.entrySet();
+        for (Map.Entry<Object, DataClass> entry:
+                entries) {
+            if(entry.getValue().filterBy(filter)){
+                objectMap.remove(entry.getKey());
             }
-        });
+        }
+
         return result;
     }
     public DataClass getByUUID(Object UUID){

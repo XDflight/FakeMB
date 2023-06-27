@@ -7,6 +7,11 @@ import security.LoginStatus;
 import security.OperatorLevel;
 import server.DataManager;
 import server.SearchGroup;
+import server.structs.PersonaData;
+
+import java.awt.event.PaintEvent;
+
+import static server.DataCentral.dataManagers;
 
 public class UserCommand {
     static CommandNode userCommandNode = new CommandNodeFork("user")
@@ -18,6 +23,8 @@ public class UserCommand {
                     }, 0)
             ).then(new CommandNodeFork("bind").then(new CommandNodeInput("persona","String").end((context)->{
                     if(LoginStatus.loggedIn()){
+                        DataManager manager=dataManagers.get(PersonaData.class);
+                        LoginStatus.getUser().persona= (PersonaData) manager.getByUUID(context.get("persona"));
 
 //                        DataManager manager=dataManagers.get(classIn);
 //                        SearchGroup.filteredGroup.forEach((data)->{
