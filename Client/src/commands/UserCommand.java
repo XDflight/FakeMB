@@ -38,7 +38,20 @@ public class UserCommand {
 //                        LoginStatus.getUser().editBy(rowToObject)
                     }
 
-            })));
+            })))
+            .then(new CommandNodeFork("login")
+                    .then(new CommandNodeFork("status")
+                            .end(context -> {
+                                if (LoginStatus.loggedIn()) {
+                                    System.out.println("[Status] Already Logged in");
+                                    System.out.println("Current User Name: " + LoginStatus.getUname());
+                                } else
+                                    System.out.println("[Status] Haven't logged in.");
+
+                                System.out.println("Current Permission Level: " + LoginStatus.getPermissionLevel());
+                            }, 0)
+                    )
+            );
 
 
     public static void register(CommandNode root) {

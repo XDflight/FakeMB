@@ -1,10 +1,7 @@
 import commandNodes.*;
 import db.Database;
 import server.SearchGroup;
-import server.structs.AccountData;
-import server.structs.CourseData;
-import server.structs.DataClass;
-import server.structs.PersonaData;
+import server.structs.*;
 import util.Logger;
 import util.StringHelper;
 import server.DataCentral;
@@ -24,6 +21,7 @@ public class Main {
         DataCentral.registerDataType(AccountData.class,true);
         DataCentral.registerDataType(PersonaData.class);
         DataCentral.registerDataType(CourseData.class);
+        DataCentral.registerDataType(GradeData.class);
         DataCentral.loadDB();
     }
 
@@ -46,19 +44,19 @@ public class Main {
 //        runCommand("filter AccountData userName:jameres");
 //
 //        runCommand("edit AccountData persona:2124");
-        runCommand("add Persona id=1");
-        runCommand("add Persona id=2");
-        runCommand("add Persona id=3");
-        runCommand("add Course id=1 students=1,2,3");
-
-        runCommand("dumpData");
-        runCommand("filter Course id=1");
-        runCommand("remove Persona id=1");
-        runCommand("dumpData");
-        runCommand("remove Persona id=2");
-        runCommand("dumpData");
-        runCommand("remove Persona id=3");
-        runCommand("dumpData");
+//        runCommand("add Persona id=1");
+//        runCommand("add Persona id=2");
+//        runCommand("add Persona id=3");
+//        runCommand("add Course id=1 students=1,2,3");
+//
+//        runCommand("dumpData");
+//        runCommand("filter Course id=1");
+//        runCommand("remove Persona id=1");
+//        runCommand("dumpData");
+//        runCommand("remove Persona id=2");
+//        runCommand("dumpData");
+//        runCommand("remove Persona id=3");
+//        runCommand("dumpData");
 //
 //        runCommand("system db save");
 
@@ -75,7 +73,9 @@ public class Main {
          * - add TableName(omit "Data") *Tagged Data*
          * - dumpData
          * - remove TableName(omit "Data") DataType:Data
-         * - user bind student_id //Bugged
+         * - user bind student_id
+         * - user login status
+         * - add TableName(omit "Data") TargetUUID
          *
          * //TODO
          *    1. quote mark fix for Tag-like info

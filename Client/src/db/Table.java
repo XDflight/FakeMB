@@ -265,6 +265,7 @@ public class Table {
         }
         for (String strSeg : strSegments) {
             String[] strParts = strSeg.split(":");
+            if (strParts.length < 2) continue;
             String strKey = strParts[0];
             String strValue = strParts[1];
             if (strKey.startsWith(prefix + ".row.")) {

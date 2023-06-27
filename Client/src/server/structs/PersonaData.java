@@ -1,7 +1,10 @@
 package server.structs;
 
+import server.structs.annotations.RefMap;
 import server.structs.annotations.RegisterRequired;
 import server.structs.annotations.UUID;
+
+import java.util.Map;
 
 public class PersonaData extends DataClass {
     @RegisterRequired
@@ -16,4 +19,7 @@ public class PersonaData extends DataClass {
 
     @RegisterRequired
     public String userGroup;
+
+    @RefMap(classType = GradeData.class)
+    public Map<String, GradeData> grades;
 }
