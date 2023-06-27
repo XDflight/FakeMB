@@ -129,9 +129,9 @@ public class DataManager {
                     if(val!=null){
                         if(field.isAnnotationPresent(RefMap.class)){
                             String build="";
-                            ArrayList<DataClass> refList= (ArrayList<DataClass>) field.get(in);
+                            Map<String,DataClass> refMap= (Map<String, DataClass>) field.get(in);
                             for (DataClass data :
-                                    refList) {
+                                    refMap.values()) {
                                 build+=data.getUUID()+",";
                             }
                             val=build;
