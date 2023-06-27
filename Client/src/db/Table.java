@@ -243,9 +243,17 @@ public class Table {
         String prefix = "table." + tableId;
         for (String strSeg : strSegments) {
             String[] strParts = strSeg.split(":");
-//            if (strParts.length < 2) continue;
-            String strKey = strParts[0];
-            String strValue = strParts[1];
+
+            String strKey = "";
+            String strValue = "";
+            if (strParts.length == 0) continue;
+            if (strParts.length == 1) {
+                strKey = strParts[0];
+                strValue = "";
+            }else if(strParts.length == 2){
+                strKey = strParts[0];
+                strValue = strParts[1];
+            }
             if (readName && strKey.equals(prefix + ".name")) {
                 tableName = strValue;
             }
@@ -266,8 +274,18 @@ public class Table {
         for (String strSeg : strSegments) {
             String[] strParts = strSeg.split(":");
 //            if (strParts.length < 2) continue;
-            String strKey = strParts[0];
-            String strValue = strParts[1];
+
+            String strKey = "";
+            String strValue = "";
+            if (strParts.length == 0) continue;
+            if (strParts.length == 1) {
+                strKey = strParts[0];
+                strValue = "";
+            }else if(strParts.length == 2){
+                strKey = strParts[0];
+                strValue = strParts[1];
+            }
+
             if (strKey.startsWith(prefix + ".row.")) {
                 String[] strSubParts = strKey.split("\\.");
                 int rowId = Integer.parseInt(strSubParts[strSubParts.length - 2]);

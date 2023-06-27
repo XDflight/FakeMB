@@ -22,7 +22,7 @@ public class DataManager {
 
     Table tableSynced;
 
-    Map<Object,DataClass> objectMap;
+    Map<Object,DataClass> objectMap=new HashMap<>();
 
     public void dumpTable(){
         tableSynced.forEach((row)->{
