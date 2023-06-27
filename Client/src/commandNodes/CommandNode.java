@@ -89,9 +89,9 @@ public class CommandNode {
                         DataClass entry = rowToEntry(dataType,context.getParameters());
                         if (loginOrRegister) {
                             if (!LoginStatus.loggedIn()) {
-                                boolean hasEntry = dataManager.queryLogin(entry);
-                                if (hasEntry) {
-                                    LoginStatus.setUser((AccountData)entry);
+                                DataClass target = dataManager.queryLogin(entry);
+                                if (target!=null) {
+                                    LoginStatus.setUser((AccountData) target);
                                     System.out.println("Login Success, Access Granted");
                                 } else {
                                     System.out.println("Login Failed");

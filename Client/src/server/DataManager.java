@@ -223,17 +223,17 @@ public class DataManager {
         );
         return has[0];
     }
-    public boolean queryLogin(DataClass dataEntry){
+    public DataClass queryLogin(DataClass dataEntry){
         DataClass targetEntry=objectMap.get(dataEntry.getUUID());
         if(targetEntry==null){
             System.out.println("Account is invalid");
-            return false;
+            return null;
         }
         if(dataEntry.loginEqual(targetEntry)){
-            return true;
+            return targetEntry;
         }else{
             System.out.println("Password is incorrect");
-            return false;
+            return null;
         }
     }
 
