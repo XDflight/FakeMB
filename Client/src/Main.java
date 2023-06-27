@@ -61,6 +61,10 @@ public class Main {
 //        System.out.println("SearchGroup.filteredGroup");
 //        System.out.println(SearchGroup.filteredGroup);
 
+        // runCommand("add Persona id:1 name:teststu gender:lgbt userGroup:admin");
+        // runCommand("add Course id:1 name:csa info:hhh students:1");
+        // runCommand("add Grade grade:95 course:1")
+
         /*
          * <Command List>
          * - register via TableName(omit "Data") *Ordered Data*

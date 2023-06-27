@@ -8,10 +8,12 @@ import db.Table;
 import security.OperatorLevel;
 import server.structs.DataClass;
 import server.structs.annotations.ComplexData;
+import server.structs.annotations.UUID;
 import util.ConfigUtil;
 import util.FileIOUtil;
 import util.MySqlUtil;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -143,9 +145,19 @@ public class DataCentral {
                         (new CommandNodeTags("editTags").end(
                                 (context -> {
                                     if(SearchGroup.filteredGroup==null || SearchGroup.filteredGroup.size()==0){
-
-
                                         DataManager manager=dataManagers.get(classIn);
+                                        String fieldName = null;
+                                        for (Field field : manager.dataClass.getDeclaredFields()) {
+                                            if (field.isAnnotationPresent(UUID.class)) {
+                                                fieldName = field.getName();
+                                                break;
+                                            }
+                                        }
+                                        if (fieldName != null) {
+                                            if (context.parameters.get(fieldName) == null) {
+                                                context.parameters.put(fieldName, java.util.UUID.randomUUID().toString().toLowerCase());
+                                            }
+                                        }
                                         manager.addEntry(manager.rowToObject(context.parameters));
                                         System.out.println("Added in global db");
                                     }else{
