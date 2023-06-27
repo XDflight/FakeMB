@@ -16,5 +16,6 @@ public class GradeData extends DataClass {
     Integer grade;
 
     @Ref(classType = CourseData.class)
+    @RegisterRequired
     public CourseData course;
 }
