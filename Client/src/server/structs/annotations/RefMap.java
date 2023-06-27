@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface RefList {
+public @interface RefMap {
     public Class<?> classType() default Object.class;
 }

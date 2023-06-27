@@ -3,9 +3,10 @@ package server;
 import db.Table;
 import server.structs.DataClass;
 import server.structs.annotations.Ref;
-import server.structs.annotations.RefList;
+import server.structs.annotations.RefMap;
 import util.ReflectHelper;
 
+import javax.xml.crypto.Data;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -71,11 +72,21 @@ public class DataManager {
 //            objectArray.add(rowObject);
         });
     }
-    public ArrayList<DataClass> filterBy(DataClass filter){
+    public Map<String, DataClass> filterBy(DataClass filter){
+        Map<String, DataClass> result=new HashMap<>();
+        objectMap.forEach((k,v)->{
+            if(v.filterBy(filter)) {
+                result.put((String)v.getUUID(),v);
+            }
+        });
+        return result;
+    }
+    public ArrayList<DataClass> removeBy(DataClass filter){
         ArrayList<DataClass> result=new ArrayList<>();
         objectMap.forEach((k,v)->{
             if(v.filterBy(filter)) {
                 result.add(v);
+                objectMap.remove(k);
             }
         });
         return result;
@@ -107,8 +118,13 @@ public class DataManager {
 
                 try {
                     Object val=field.get(in);
+
+                    if(field.getType().getSimpleName().equals("Boolean")){
+                        val = (Boolean) (val==null?false:val) ? "true" : "false";
+                    }
+
                     if(val!=null){
-                        if(field.isAnnotationPresent(RefList.class)){
+                        if(field.isAnnotationPresent(RefMap.class)){
                             String build="";
                             ArrayList<DataClass> refList= (ArrayList<DataClass>) field.get(in);
                             for (DataClass data :
@@ -122,6 +138,7 @@ public class DataManager {
                             val=ref.getUUID();
                         }
                     }
+
                     row.put(fieldName,val!=null?val:"null");
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -143,10 +160,10 @@ public class DataManager {
                 if(row.containsKey(fieldName)){
                     Object fieldVal=row.get(field.getName());
 
-                    if(field.isAnnotationPresent(RefList.class)){
+                    if(field.isAnnotationPresent(RefMap.class)){
                         ArrayList<DataClass> refList=new ArrayList<>();
 
-                        DataManager dataset= getDatasetOfClass(field.getAnnotation(RefList.class).classType());
+                        DataManager dataset= getDatasetOfClass(field.getAnnotation(RefMap.class).classType());
                         if(paramVal instanceof String){
                             String aString = (String) paramVal;
                             String[] refs=aString.split(",");
@@ -166,6 +183,11 @@ public class DataManager {
                         }
 
                     }
+
+                    if(field.getType().getSimpleName().equals("Boolean")){
+                        fieldVal= ((String) fieldVal).equalsIgnoreCase("true");
+                    }
+
                     try {
                         field.set(templateDataClass,fieldVal);
                     } catch (IllegalAccessException e) {

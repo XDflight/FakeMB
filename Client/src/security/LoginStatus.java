@@ -38,6 +38,9 @@ public class LoginStatus {
         if(!loggedIn()){
             return false;
         }
-        return permissionByRole(account.persona.userGroup) >= lvl;
+        if(account.isSuperAdmin){
+            return true;
+        }
+        return getPermissionLevel() >= lvl;
     }
 }
