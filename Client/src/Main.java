@@ -61,11 +61,21 @@ public class Main {
 //        System.out.println("SearchGroup.filteredGroup");
 //        System.out.println(SearchGroup.filteredGroup);
 
-        // runCommand("add Persona id:1 name:teststu gender:lgbt userGroup:admin");
-        // runCommand("add Course id:1 name:csa info:hhh students:1");
-        // runCommand("add Grade grade:95 course:1")
+//        runCommand("register via Account testuser 123456");
+//        runCommand("add Persona id:1 name:testuser gender:lgbt userGroup:admin");
+//        runCommand("login via Account testuser 123456");
+//        runCommand("user bind 1");
+//        runCommand("add Course id:1 name:csa info:hhh students:1");
+//        runCommand("add Grade grade:95 course:1 persona:1");
+//        runCommand("add Grade grade:100 course:1 persona:1");
+//        runCommand("add Grade grade:100 course:1 persona:1");
+//        runCommand("add Course id:2 name:lang info:hhh students:1");
+//        runCommand("add Grade grade:86 course:2 persona:1");
+//        runCommand("add Grade grade:84 course:2 persona:1");
+//        runCommand("add Grade grade:98 course:2 persona:1");
+//        runCommand("user grade view");
 
-        /*
+        /*s
          * <Command List>
          * - register via TableName(omit "Data") *Ordered Data*
          * - login via Account username password
@@ -78,6 +88,7 @@ public class Main {
          * - user bind student_id
          * - user login status
          * - add TableName(omit "Data") TargetUUID
+         * - user grade view
          *
          * //TODO
          *    1. quote mark fix for Tag-like info

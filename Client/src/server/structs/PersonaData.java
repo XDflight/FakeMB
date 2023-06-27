@@ -19,7 +19,4 @@ public class PersonaData extends DataClass {
 
     @RegisterRequired
     public String userGroup;
-
-    @RefMap(classType = GradeData.class)
-    public Map<String, GradeData> grades;
 }

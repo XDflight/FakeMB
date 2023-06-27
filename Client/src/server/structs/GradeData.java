@@ -13,9 +13,13 @@ public class GradeData extends DataClass {
     String id;
 
     @RegisterRequired
-    String grade;
+    public String grade;
 
     @Ref(classType = CourseData.class)
     @RegisterRequired
     public CourseData course;
+
+    @Ref(classType = PersonaData.class)
+    @RegisterRequired
+    public PersonaData persona;
 }

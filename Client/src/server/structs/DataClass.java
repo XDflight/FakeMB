@@ -172,12 +172,19 @@ public class DataClass {
     private Object packVar(Field varType,Object var){
 
         if (var==null)var="";
-
         if(varType.getType().getSimpleName().equals("Boolean")){
-            return (Boolean) var ? "true" : "false";
+            try {
+                return ((Boolean) var) ? "true" : "false";
+            } catch (ClassCastException e) {
+                return "false";
+            }
         }
         if(varType.getType().getSimpleName().equals("Integer")){
-            return ((Integer) var).toString();
+            try {
+                return ((Integer) var).toString();
+            } catch (ClassCastException e) {
+                return "0";
+            }
         }
 
 

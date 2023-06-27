@@ -2,6 +2,8 @@ package util;
 
 import javafx.util.Pair;
 
+import java.util.List;
+
 public class GradeCalc {
     private static final int MAX_GRADE = 100;
 
@@ -23,14 +25,14 @@ public class GradeCalc {
             new Pair<String, Float>("F", 0f)
     };
 
-    public static String calcClassGrade(int[] grades) {
-        if (grades.length == 0)
+    public static String calcClassGrade(List<Integer> grades) {
+        if (grades.size() == 0)
             return null;
         float gradeSum = 0;
         for (int grade : grades) {
             gradeSum += (float) grade / MAX_GRADE;
         }
-        gradeSum /= grades.length;
+        gradeSum /= grades.size();
         gradeSum = Math.round(gradeSum * 100) / 100f;
         for (Object lvlObj : classGradeLevels) {
             Pair<Integer, String> lvl = (Pair<Integer, String>) lvlObj;
@@ -41,11 +43,11 @@ public class GradeCalc {
         return null;
     }
 
-    public static float calcOverallGPA(int[][] gradesList) {
+    public static float calcOverallGPA(Object[] gradesList) {
         float overallGPA = 0;
         int countedNum = 0;
-        for (int[] grades : gradesList) {
-            String classGrade = calcClassGrade(grades);
+        for (Object grades : gradesList) {
+            String classGrade = calcClassGrade((List<Integer>) grades);
             if (classGrade != null) {
                 for (Object lvlObj : GPALevels) {
                     Pair<String, Float> lvl = (Pair<String, Float>) lvlObj;
@@ -59,14 +61,5 @@ public class GradeCalc {
         if (countedNum == 0)
             return 0;
         return Math.round(overallGPA / countedNum * 100) / 100f;
-    }
-
-    public static void main(String[] args) {
-        int[][] a = {
-                {100, 99, 99, 97, 92},
-                {93, 96, 92, 86, 87},
-                {100, 100, 100, 100, 100}
-        };
-        System.out.println(calcOverallGPA(a));
     }
 }
